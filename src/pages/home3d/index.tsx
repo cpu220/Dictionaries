@@ -48,7 +48,7 @@ export default function Home3D() {
           <Button
             size='small'
             onClick={handleBackToOriginal}
-            style={{ fontSize: '12px' }}
+            style={{ fontSize: '0.12rem' }}
           >
             Back to 2D
           </Button>
@@ -80,19 +80,19 @@ export default function Home3D() {
       {/* Instructions overlay */}
       <div style={{
         position: 'absolute',
-        bottom: 20,
-        left: 20,
-        right: 20,
+        bottom: '0.2rem',
+        left: '0.2rem',
+        right: '0.2rem',
         color: 'white',
         textAlign: 'center',
-        fontSize: '14px',
+        fontSize: '0.14rem',
         background: 'rgba(0, 0, 0, 0.6)',
-        padding: '10px',
-        borderRadius: '8px',
+        padding: '0.1rem',
+        borderRadius: '0.08rem',
         zIndex: 10,
       }}>
-        <p style={{ margin: '0 0 5px 0' }}>🖱️ Drag to rotate • 🔍 Scroll to zoom • Click planet to study</p>
-        <p style={{ margin: 0, fontSize: '12px', color: '#aaa' }}>
+        <p style={{ margin: '0 0 0.05rem 0' }}>🖱️ Drag to rotate • 🔍 Scroll to zoom • Click planet to study</p>
+        <p style={{ margin: 0, fontSize: '0.12rem', color: '#aaa' }}>
           🔴 Low Proficiency • 🟡 Medium • 🟢 High
         </p>
       </div>

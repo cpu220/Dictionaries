@@ -36,10 +36,10 @@ export default function ProfilePage() {
         <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
             <NavBar onBack={() => history.back()}>Profile & Mistakes</NavBar>
 
-            <div style={{ padding: '20px' }}>
-                <h3 style={{ marginBottom: '10px' }}>Common Mistakes</h3>
+            <div style={{ padding: '0.2rem' }}>
+                <h3 style={{ marginBottom: '0.1rem' }}>Common Mistakes</h3>
                 {mistakes.length === 0 ? (
-                    <div style={{ textAlign: 'center', marginTop: '50px', color: '#888' }}>
+                    <div style={{ textAlign: 'center', marginTop: '0.5rem', color: '#888' }}>
                         <p>No common mistakes found yet.</p>
                         <p>Keep studying!</p>
                     </div>
@@ -52,7 +52,7 @@ export default function ProfilePage() {
                                 clickable
                             >
                                 {word.word}
-                                <div style={{ fontSize: '12px', color: '#888' }}>{word.translation}</div>
+                                <div style={{ fontSize: '0.12rem', color: '#888' }}>{word.translation}</div>
                             </List.Item>
                         ))}
                     </List>

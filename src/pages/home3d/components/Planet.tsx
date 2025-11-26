@@ -162,9 +162,9 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
       <Html position={[0, 1.8, 0]} center>
         <div style={{
           color: 'white',
-          fontSize: '18px',
+          fontSize: '0.48rem',
           fontWeight: 'bold',
-          textShadow: '2px 2px 4px rgba(0,0,0,0.8)',
+          textShadow: '0.02rem 0.02rem 0.04rem rgba(0,0,0,0.8)',
           whiteSpace: 'nowrap',
           pointerEvents: 'none',
           userSelect: 'none',
@@ -177,8 +177,8 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
       <Html position={[0, 1.4, 0]} center>
         <div style={{
           color: '#aaa',
-          fontSize: '12px',
-          textShadow: '1px 1px 2px rgba(0,0,0,0.8)',
+          fontSize: '0.32rem',
+          textShadow: '0.01rem 0.01rem 0.02rem rgba(0,0,0,0.8)',
           whiteSpace: 'nowrap',
           pointerEvents: 'none',
           userSelect: 'none',

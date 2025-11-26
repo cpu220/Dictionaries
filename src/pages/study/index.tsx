@@ -92,7 +92,7 @@ export default function StudyPage() {
         return (
              <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f5f5f5' }}>
                 <NavBar onBack={() => history.back()}>Study: {deckId}</NavBar>
-                <div style={{ padding: '20px', textAlign: 'center' }}>No words found in this deck.</div>
+                <div style={{ padding: '0.2rem', textAlign: 'center' }}>No words found in this deck.</div>
             </div>
         );
     }
@@ -103,8 +103,8 @@ export default function StudyPage() {
         <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', background: '#f5f5f5' }}>
             <NavBar onBack={() => history.back()}>Study: {deckId}</NavBar>
 
-            <div style={{ flex: 1, padding: '20px', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <div style={{ marginBottom: '20px', textAlign: 'center', color: '#888' }}>
+            <div style={{ flex: 1, padding: '0.2rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <div style={{ marginBottom: '0.2rem', textAlign: 'center', color: '#888' }}>
                     Word {currentIndex + 1} / {words.length}
                 </div>
 
@@ -117,28 +117,28 @@ export default function StudyPage() {
 
             {isFlipped && (
                 <div style={{
-                    padding: '20px',
+                    padding: '0.2rem',
                     background: 'white',
-                    borderTopLeftRadius: '16px',
-                    borderTopRightRadius: '16px',
-                    boxShadow: '0 -2px 10px rgba(0,0,0,0.05)'
+                    borderTopLeftRadius: '0.16rem',
+                    borderTopRightRadius: '0.16rem',
+                    boxShadow: '0 -0.02rem 0.1rem rgba(0,0,0,0.05)'
                 }}>
-                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '10px' }}>
+                    <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.1rem' }}>
                         <Button block color='danger' onClick={() => handleScore(1)}>
                             Again
-                            <div style={{ fontSize: '10px', opacity: 0.8 }}>&lt; 1m</div>
+                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>&lt; 1m</div>
                         </Button>
                         <Button block color='warning' onClick={() => handleScore(5)}>
                             Hard
-                            <div style={{ fontSize: '10px', opacity: 0.8 }}>2d</div>
+                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>2d</div>
                         </Button>
                         <Button block color='primary' fill='outline' onClick={() => handleScore(8)}>
                             Good
-                            <div style={{ fontSize: '10px', opacity: 0.8 }}>2w</div>
+                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>2w</div>
                         </Button>
                         <Button block color='success' fill='outline' onClick={() => handleScore(10)}>
                             Easy
-                            <div style={{ fontSize: '10px', opacity: 0.8 }}>1mo</div>
+                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>1mo</div>
                         </Button>
                     </div>
                 </div>

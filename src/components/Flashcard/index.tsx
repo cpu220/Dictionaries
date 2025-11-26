@@ -1,7 +1,8 @@
 import React from 'react';
 import { Word } from '@/interfaces';
-import Front from './Front';
-import Back from './Back';
+import Front from './front';
+import Back from './back';
+import './index.less';
 
 interface FlashcardProps {
     word: Word;
@@ -11,55 +12,15 @@ interface FlashcardProps {
 
 export default function Flashcard({ word, isFlipped, onFlip }: FlashcardProps) {
     return (
-        <div
-            style={{
-                perspective: '1000px',
-                width: '100%',
-                height: '400px',
-                cursor: 'pointer'
-            }}
-            onClick={onFlip}
-        >
-            <div
-                style={{
-                    position: 'relative',
-                    width: '100%',
-                    height: '100%',
-                    textAlign: 'center',
-                    transition: 'transform 0.6s',
-                    transformStyle: 'preserve-3d',
-                    transform: isFlipped ? 'rotateY(180deg)' : 'rotateY(0deg)',
-                    boxShadow: '0 4px 8px rgba(0,0,0,0.1)',
-                    borderRadius: '16px',
-                    backgroundColor: 'white',
-                }}
-            >
+        <div className="flashcard-container" onClick={onFlip}>
+            <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`}>
                 {/* Front */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        backfaceVisibility: 'hidden',
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                    }}
-                >
+                <div className="flashcard-face flashcard-front">
                     <Front word={word} />
                 </div>
 
                 {/* Back */}
-                <div
-                    style={{
-                        position: 'absolute',
-                        width: '100%',
-                        height: '100%',
-                        backfaceVisibility: 'hidden',
-                        transform: 'rotateY(180deg)',
-                        borderRadius: '16px',
-                        overflow: 'hidden',
-                    }}
-                >
+                <div className="flashcard-face flashcard-back">
                     <Back word={word} />
                 </div>
             </div>

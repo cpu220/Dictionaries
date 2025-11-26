@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { Word } from '@/interfaces';
-import PhoneticRow from './PhoneticRow';
-import { ROOT_PATH } from '../../../baseConfig'; // Not used in source logic shown, but imported.
+import PhoneticRow from '../PhoneticRow';
+import { ROOT_PATH } from '../../../../baseConfig';
+import './index.less';
 // import { SoundOutline } from 'antd-mobile-icons'; // Not used in source logic shown, but imported.
 
 interface BackProps {
@@ -45,7 +46,7 @@ export default function Back({ word }: BackProps) {
         return (
             <>
                 {before}
-                <span style={{ backgroundColor: '#fff7cc', color: '#d48806' }}>{match}</span>
+                <span className="flashcard-highlight">{match}</span>
                 {after}
             </>
         );
@@ -64,52 +65,21 @@ export default function Back({ word }: BackProps) {
     };
 
     return (
-        <div 
-            onClick={playFullAudio}
-            style={{
-            height: '100%',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'center',
-            alignItems: 'center',
-            padding: '20px',
-            cursor: 'pointer', // Indicate clickable
-            position: 'relative'
-        }}>
+        <div className="flashcard-back-content" onClick={playFullAudio}>
             {/* Speed Control */}
-            <div 
-                onClick={(e) => e.stopPropagation()}
-                style={{
-                    position: 'absolute',
-                    top: '10px',
-                    right: '10px',
-                    display: 'flex',
-                    gap: '5px',
-                    background: '#f5f5f5',
-                    padding: '4px',
-                    borderRadius: '8px'
-                }}
-            >
+            <div className="speed-control" onClick={(e) => e.stopPropagation()}>
                 {[0.5, 0.75, 1].map(rate => (
                     <div
                         key={rate}
+                        className={`speed-control-item ${playbackRate === rate ? 'active' : ''}`}
                         onClick={() => setPlaybackRate(rate)}
-                        style={{
-                            padding: '2px 6px',
-                            borderRadius: '4px',
-                            fontSize: '0.8rem',
-                            cursor: 'pointer',
-                            backgroundColor: playbackRate === rate ? '#1677ff' : 'transparent',
-                            color: playbackRate === rate ? '#fff' : '#666',
-                            transition: 'all 0.2s'
-                        }}
                     >
                         x{rate}
                     </div>
                 ))}
             </div>
 
-            <h1 style={{ fontSize: '2.5rem', fontWeight: 'bold', margin: '0 0 10px 0' }}>
+            <h1 className="flashcard-back-word">
                 {renderWordWithHighlight()}
             </h1>
 
@@ -122,7 +92,7 @@ export default function Back({ word }: BackProps) {
                 />
             </div>
 
-            <div style={{ marginTop: '20px', fontSize: '1.2rem', textAlign: 'center' }}>
+            <div className="flashcard-translation">
                 {word.translation}
             </div>
         </div>
