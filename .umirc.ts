@@ -3,10 +3,13 @@ import { ROOT_PATH } from './baseConfig';
 
 export default defineConfig({
   routes: [
-    { path: "/", component: "index" },
-    { path: "/docs", component: "docs" },
+    // { path: "/", component: "index" },
+    { path: "/", component: "home/index" },
+    { path: "/profile", component: "profile/index" },
+    { path: "/study", component: "study/index" },
   ],
-  npmClient: 'yarn',
+  npmClient: 'npm',
+  mfsu: false,
     // 配置基础路径和公共路径，用于Nginx部署
   base: `${ROOT_PATH}/`,
   publicPath: `${ROOT_PATH}/`,
