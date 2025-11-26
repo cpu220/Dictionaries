@@ -5,6 +5,7 @@ export default defineConfig({
   routes: [
     // { path: "/", component: "index" },
     { path: "/", component: "home/index" },
+    { path: "/home3d", component: "home3d/index" },
     { path: "/profile", component: "profile/index" },
     { path: "/study", component: "study/index" },
   ],

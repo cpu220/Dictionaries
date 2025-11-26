@@ -29,6 +29,13 @@ export default function HomePage() {
             </List.Item>
           ))}
           <List.Item
+            onClick={() => history.push('/home3d')}
+            clickable
+            prefix={<span style={{ fontSize: '20px' }}>🌍</span>}
+          >
+            3D Planet View (Beta)
+          </List.Item>
+          <List.Item
             onClick={() => history.push('/profile')}
             clickable
             prefix={<span style={{ fontSize: '20px' }}>👤</span>}
