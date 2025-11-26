@@ -28,7 +28,7 @@ const PROFICIENCY_CONFIG = {
 };
 
 export default function Satellite({ proficiencyLevel, orbitRadius, orbitSpeed, initialAngle }: SatelliteProps) {
-  const meshRef = useRef<THREE.Mesh>(null);
+  const meshRef = useRef<THREE.Group>(null);
   const angleRef = useRef(initialAngle);
 
   useFrame((state, delta) => {
@@ -51,15 +51,33 @@ export default function Satellite({ proficiencyLevel, orbitRadius, orbitSpeed, i
   const config = PROFICIENCY_CONFIG[proficiencyLevel];
 
   return (
-    <mesh ref={meshRef}>
-      <sphereGeometry args={[config.size, 16, 16]} />
-      <meshStandardMaterial 
-        color={config.color}
-        emissive={config.emissive}
-        emissiveIntensity={0.5}
-        metalness={0.8}
-        roughness={0.2}
-      />
-    </mesh>
+    <group ref={meshRef}>
+      {/* Main transparent sphere */}
+      <mesh>
+        <sphereGeometry args={[config.size, 16, 16]} />
+        <meshPhysicalMaterial 
+          color={config.color}
+          emissive={config.emissive}
+          emissiveIntensity={0.8}
+          transparent
+          opacity={0.7}
+          metalness={0.2}
+          roughness={0.1}
+          transmission={0.5}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
+        />
+      </mesh>
+      
+      {/* Outer glow */}
+      <mesh scale={1.5}>
+        <sphereGeometry args={[config.size, 8, 8]} />
+        <meshBasicMaterial 
+          color={config.emissive}
+          transparent
+          opacity={0.3}
+        />
+      </mesh>
+    </group>
   );
 }

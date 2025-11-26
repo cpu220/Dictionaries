@@ -70,30 +70,67 @@ export default function Planet({ position, deckName, deckId, stats, color, onCli
 
   return (
     <group position={position}>
-      {/* Planet */}
+      {/* Planet - Transparent glass effect */}
       <mesh
         ref={meshRef}
         onClick={handleClick}
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshStandardMaterial
+        <sphereGeometry args={[1, 64, 64]} />
+        <meshPhysicalMaterial
           color={color}
-          emissive={color}
-          emissiveIntensity={hovered ? 0.4 : 0.2}
-          metalness={0.4}
-          roughness={0.6}
+          transparent
+          opacity={0.6}
+          metalness={0.1}
+          roughness={0.1}
+          transmission={0.9}
+          thickness={0.5}
+          envMapIntensity={1}
+          clearcoat={1}
+          clearcoatRoughness={0.1}
         />
       </mesh>
 
-      {/* Atmosphere glow */}
-      <mesh scale={1.1}>
+      {/* Wireframe overlay for Earth-like grid */}
+      <mesh scale={1.01}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial
+          color={color}
+          wireframe
+          transparent
+          opacity={hovered ? 0.3 : 0.2}
+        />
+      </mesh>
+
+      {/* Inner glow */}
+      <mesh scale={0.95}>
         <sphereGeometry args={[1, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent
-          opacity={hovered ? 0.25 : 0.15}
+          opacity={0.2}
+        />
+      </mesh>
+
+      {/* Atmosphere glow - outer layer */}
+      <mesh scale={1.15}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={hovered ? 0.3 : 0.2}
+          side={THREE.BackSide}
+        />
+      </mesh>
+
+      {/* Atmosphere glow - middle layer */}
+      <mesh scale={1.08}>
+        <sphereGeometry args={[1, 32, 32]} />
+        <meshBasicMaterial
+          color={color}
+          transparent
+          opacity={0.15}
           side={THREE.BackSide}
         />
       </mesh>
