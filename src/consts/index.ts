@@ -13,7 +13,7 @@ export const RANDOM_LETTER_COUNT = 5;
  * Number of words to include in a study session.
  * This controls how many words are randomly selected when starting a new study session.
  */
-export const SESSION_WORDS_COUNT = 10;
+export const SESSION_WORDS_COUNT = 5;
 
 /**
  * Key prefix for localStorage items

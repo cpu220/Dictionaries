@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Word } from '@/interfaces';
 import PhoneticRow from '../PhoneticRow';
 import { ROOT_PATH } from '../../../../baseConfig';
+import audioCache from '@/utils/audioCache';
 import './index.less';
 // import { SoundOutline } from 'antd-mobile-icons'; // Not used in source logic shown, but imported.
 
@@ -58,9 +59,8 @@ export default function Back({ word }: BackProps) {
             // Also remove trailing slash from ROOT_PATH if present to avoid double slashes, though ROOT_PATH here is /Dictionaries
             const audioPath = word.audio_url.startsWith('/') ? `${ROOT_PATH}${word.audio_url}` : word.audio_url;
             console.log('Playing audio from:', audioPath);
-            const audio = new Audio(audioPath);
-            audio.playbackRate = playbackRate;
-            audio.play().catch(e => console.error('Audio play failed', e));
+            // 使用音频缓存工具播放音频
+            audioCache.playAudio(audioPath, playbackRate).catch(e => console.error('Audio play failed', e));
         }
     };
 

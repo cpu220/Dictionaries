@@ -3,9 +3,9 @@ import { useSearchParams, history } from 'umi';
 import { Button, NavBar, Loading, Toast } from 'antd-mobile';
 import Flashcard from '@/components/Flashcard';
 import { getWords } from '@/utils/data';
-import { Word, UserProgress } from '@/interfaces';
+import { Word, UserProgress, StudySession } from '@/interfaces';
 import { calculateNextReview, getInitialProgress } from '@/utils/scheduler';
-import { saveProgress, getProgress } from '@/utils/storage';
+import { saveProgress, getProgress, saveSession, loadCurrentSession, loadSession, clearSession, createSession } from '@/utils/storage/progress';
 import { SESSION_WORDS_COUNT } from '@/consts';
 
 export default function StudyPage() {
@@ -16,24 +16,81 @@ export default function StudyPage() {
     const [currentIndex, setCurrentIndex] = useState(0);
     const [isFlipped, setIsFlipped] = useState(false);
     const [loading, setLoading] = useState(true);
+    const [currentSession, setCurrentSession] = useState<StudySession | null>(null);
 
     useEffect(() => {
         async function loadData() {
             const data = await getWords(deckId);
-            // Filter words that are due for review (mock logic for now: show all or just first 10)
-            // In a real app, we would filter based on getProgress(word.id).next_review_time < Date.now()
-            
-            // For demo, let's shuffle and take a fixed number of words if it's a large deck
             let sessionWords = data;
-            if (data.length > SESSION_WORDS_COUNT) {
-                sessionWords = [...data].sort(() => Math.random() - 0.5).slice(0, SESSION_WORDS_COUNT);
+            let initialIndex = 0;
+            let currentSession: StudySession | null = null;
+            
+            // 优先处理 sessionId 参数
+            const targetSessionId = searchParams.get('sessionId');
+            const targetWordId = searchParams.get('initialWordId') || searchParams.get('wordId');
+
+            if (targetSessionId) {
+                // 加载指定会话
+                const session = loadSession(targetSessionId);
+                if (session) {
+                    currentSession = session;
+                    sessionWords = session.wordList.map(wordId => {
+                        return data.find(word => word.id === wordId);
+                    }).filter(Boolean) as Word[];
+                    
+                    // 如果指定了单词ID，跳转到该单词
+                    if (targetWordId) {
+                        const wordIndex = session.wordList.indexOf(targetWordId);
+                        if (wordIndex !== -1) {
+                            initialIndex = wordIndex;
+                        } else {
+                            initialIndex = session.currentIndex;
+                        }
+                    } else {
+                        initialIndex = session.currentIndex;
+                    }
+                }
+            } 
+            // 如果没有 sessionId 但有 wordId (旧逻辑兼容)
+            else if (targetWordId) {
+                // 如果指定了单词ID，找到该单词在列表中的位置
+                const wordIndex = data.findIndex(word => word.id === targetWordId);
+                if (wordIndex !== -1) {
+                    // 加载整个卡组，并设置初始索引为目标单词的位置
+                    sessionWords = data;
+                    initialIndex = wordIndex;
+                    
+                    // 创建新的学习会话
+                    currentSession = createSession(deckId, sessionWords.map(word => word.id));
+                }
+            } else {
+                // 否则，检查是否有当前活跃会话
+                const savedSession = loadCurrentSession();
+                if (savedSession && savedSession.deckId === deckId && !savedSession.completed) {
+                    // 如果有已保存的会话且未完成，使用已保存的单词列表和当前索引
+                    currentSession = savedSession;
+                    sessionWords = savedSession.wordList.map(wordId => {
+                        return data.find(word => word.id === wordId) || data[0];
+                    }).filter(Boolean) as Word[];
+                    initialIndex = savedSession.currentIndex;
+                } else {
+                    // 否则，随机选择一定数量的单词
+                    if (data.length > SESSION_WORDS_COUNT) {
+                        sessionWords = [...data].sort(() => Math.random() - 0.5).slice(0, SESSION_WORDS_COUNT);
+                    }
+                    
+                    // 创建新的学习会话
+                    currentSession = createSession(deckId, sessionWords.map(word => word.id));
+                }
             }
             
             setWords(sessionWords);
+            setCurrentIndex(initialIndex);
+            setCurrentSession(currentSession);
             setLoading(false);
         }
         loadData();
-    }, [deckId]);
+    }, [deckId, searchParams]);
 
     const handleFlip = () => {
         if (!isFlipped) {
@@ -42,8 +99,10 @@ export default function StudyPage() {
     };
 
     const handleScore = (score: number) => {
+        if (!currentSession) return;
+        
         const currentWord = words[currentIndex];
-        const previousProgress = getProgress(currentWord.id) || getInitialProgress(currentWord.id);
+        const previousProgress = getProgress(deckId, currentWord.id) || getInitialProgress(currentWord.id);
 
         const reviewResult = calculateNextReview(
             previousProgress.interval,
@@ -62,7 +121,7 @@ export default function StudyPage() {
             ]
         };
 
-        saveProgress(newProgress);
+        saveProgress(deckId, newProgress);
 
         Toast.show({
             content: 'Saved',
@@ -70,9 +129,31 @@ export default function StudyPage() {
         });
 
         if (currentIndex < words.length - 1) {
+            // 更新学习会话的当前索引
+            const nextIndex = currentIndex + 1;
+            const updatedSession: StudySession = {
+                ...currentSession,
+                currentIndex: nextIndex,
+                updatedAt: Date.now(),
+                completed: false
+            };
+            
+            saveSession(updatedSession);
+            setCurrentSession(updatedSession);
+            
             setIsFlipped(false);
             setTimeout(() => setCurrentIndex(prev => prev + 1), 300);
         } else {
+            // 学习会话完成，更新会话状态为已完成
+            const completedSession: StudySession = {
+                ...currentSession,
+                currentIndex: currentIndex,
+                updatedAt: Date.now(),
+                completed: true
+            };
+            
+            saveSession(completedSession);
+            
             Toast.show({
                 content: 'Session Complete!',
                 icon: 'success',

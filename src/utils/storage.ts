@@ -1,31 +1,27 @@
+// 向后兼容层，将旧的API重定向到新的基于卡包的API
 import { UserProgress } from '@/interfaces';
+import { saveProgress as saveProgressV2, loadAllProgress as loadAllProgressV2, getProgress as getProgressV2 } from './storage/progress';
 
-const STORAGE_KEY = 'user_progress_v1';
+// 默认卡包ID
+const DEFAULT_DECK_ID = 'cet4';
 
+// 旧API的向后兼容实现
 export function saveProgress(progress: UserProgress) {
-    if (typeof window === 'undefined') return;
-
-    const allProgress = loadAllProgress();
-    allProgress[progress.word_id] = progress;
-
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(allProgress));
+    saveProgressV2(DEFAULT_DECK_ID, progress);
 }
 
 export function loadAllProgress(): Record<string, UserProgress> {
-    if (typeof window === 'undefined') return {};
-
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (!stored) return {};
-
-    try {
-        return JSON.parse(stored);
-    } catch (e) {
-        console.error('Failed to parse progress', e);
-        return {};
-    }
+    const allProgress = loadAllProgressV2();
+    return allProgress[DEFAULT_DECK_ID] || {};
 }
 
 export function getProgress(wordId: string): UserProgress | null {
-    const all = loadAllProgress();
-    return all[wordId] || null;
+    return getProgressV2(DEFAULT_DECK_ID, wordId);
 }
+
+// 导出新API
+export { 
+    saveProgress as saveProgressV2, 
+    loadAllProgress as loadAllProgressV2, 
+    getProgress as getProgressV2 
+} from './storage/progress';
