@@ -40,7 +40,7 @@ export default function ProfilePage() {
 
     // 获取会话中的单词详情
     const getSessionWords = (session: StudySession): Word[] => {
-        return session.wordList.map(wordId => allWords.find(w => w.id === wordId)).filter(Boolean) as Word[];
+        return session.words.map(item => allWords.find(w => w.id === item.id)).filter(Boolean) as Word[];
     };
 
     // 点击单词跳转到study页面
@@ -89,7 +89,7 @@ export default function ProfilePage() {
                     }}>
                         {sessions.map(session => {
                             const sessionWords = getSessionWords(session);
-                            const progress = Math.round(((session.currentIndex + 1) / session.wordList.length) * 100);
+                            const progress = Math.round(((session.currentIndex + 1) / session.words.length) * 100);
                             const isExpanded = expandedSessionId === session.id;
                             
                             return (
@@ -119,7 +119,7 @@ export default function ProfilePage() {
                                         </div>
                                         
                                         <div style={{ marginBottom: '0.1rem', fontSize: '0.28rem', color: '#666' }}>
-                                            共 {session.wordList.length} 个单词
+                                            共 {session.words.length} 个单词
                                         </div>
                                         
                                         <div style={{ marginBottom: '0.1rem' }}>
@@ -135,12 +135,27 @@ export default function ProfilePage() {
                                                 <List header="单词列表">
                                                     {sessionWords.map((word, index) => {
                                                         const isLearned = index <= session.currentIndex;
+                                                        const sessionWord = session.words.find(w => w.id === word.id);
+                                                        const result = sessionWord?.result;
+                                                        
+                                                        let resultTag = null;
+                                                        if (result) {
+                                                            if (result <= 1) resultTag = <Tag color="danger">Again</Tag>;
+                                                            else if (result <= 5) resultTag = <Tag color="warning">Hard</Tag>;
+                                                            else if (result <= 8) resultTag = <Tag color="primary">Good</Tag>;
+                                                            else resultTag = <Tag color="success">Easy</Tag>;
+                                                        } else if (isLearned) {
+                                                            resultTag = <Tag color="default">已学</Tag>;
+                                                        } else {
+                                                            resultTag = <Tag color="default" style={{ opacity: 0.5 }}>未学</Tag>;
+                                                        }
+
                                                         return (
                                                             <List.Item
                                                                 key={word.id}
                                                                 onClick={(e) => handleWordClick(e, session, word.id)}
                                                                 clickable
-                                                                extra={isLearned ? <span style={{ color: '#52c41a' }}>已学</span> : <span style={{ color: '#faad14' }}>未学</span>}
+                                                                extra={resultTag}
                                                             >
                                                                 <span style={{ fontWeight: 'bold' }}>{word.word}</span>
                                                                 <div style={{ fontSize: '0.24rem', color: '#888', marginTop: '0.05rem' }}>{word.translation}</div>

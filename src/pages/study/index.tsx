@@ -34,13 +34,13 @@ export default function StudyPage() {
                 const session = loadSession(targetSessionId);
                 if (session) {
                     currentSession = session;
-                    sessionWords = session.wordList.map(wordId => {
-                        return data.find(word => word.id === wordId);
+                    sessionWords = session.words.map(item => {
+                        return data.find(word => word.id === item.id);
                     }).filter(Boolean) as Word[];
                     
                     // 如果指定了单词ID，跳转到该单词
                     if (targetWordId) {
-                        const wordIndex = session.wordList.indexOf(targetWordId);
+                        const wordIndex = session.words.findIndex(item => item.id === targetWordId);
                         if (wordIndex !== -1) {
                             initialIndex = wordIndex;
                         } else {
@@ -69,8 +69,8 @@ export default function StudyPage() {
                 if (savedSession && savedSession.deckId === deckId && !savedSession.completed) {
                     // 如果有已保存的会话且未完成，使用已保存的单词列表和当前索引
                     currentSession = savedSession;
-                    sessionWords = savedSession.wordList.map(wordId => {
-                        return data.find(word => word.id === wordId) || data[0];
+                    sessionWords = savedSession.words.map(item => {
+                        return data.find(word => word.id === item.id) || data[0];
                     }).filter(Boolean) as Word[];
                     initialIndex = savedSession.currentIndex;
                 } else {
@@ -128,11 +128,22 @@ export default function StudyPage() {
             duration: 500,
         });
 
+        // 更新会话中的单词结果
+        const updatedWords = [...currentSession.words];
+        // 找到当前单词在会话中的索引（注意：words数组和currentSession.words数组是对应的）
+        if (updatedWords[currentIndex]) {
+            updatedWords[currentIndex] = {
+                ...updatedWords[currentIndex],
+                result: score
+            };
+        }
+
         if (currentIndex < words.length - 1) {
             // 更新学习会话的当前索引
             const nextIndex = currentIndex + 1;
             const updatedSession: StudySession = {
                 ...currentSession,
+                words: updatedWords,
                 currentIndex: nextIndex,
                 updatedAt: Date.now(),
                 completed: false
@@ -147,6 +158,7 @@ export default function StudyPage() {
             // 学习会话完成，更新会话状态为已完成
             const completedSession: StudySession = {
                 ...currentSession,
+                words: updatedWords,
                 currentIndex: currentIndex,
                 updatedAt: Date.now(),
                 completed: true

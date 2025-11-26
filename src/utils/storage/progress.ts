@@ -3,13 +3,12 @@
  * 基于通用缓存API封装，以卡包为单位进行存储
  */
 
-import { UserProgress, DeckProgress, AllProgress, StudySession, SessionRecord, SessionRecords, StudySessionsMap } from '@/interfaces';
+import { UserProgress, DeckProgress, AllProgress, StudySession, StudySessionsMap } from '@/interfaces';
 import { getStorage, updateStorage } from './base';
 
 const STORAGE_KEY = 'user_progress_v2';
 const SESSIONS_MAP_KEY = 'study_sessions_map';
 const SESSION_PREFIX = 'study_session_';
-const RECORDS_KEY = 'session_records';
 
 /**
  * 生成唯一会话ID
@@ -103,7 +102,6 @@ export function clearDeckProgress(deckId: string): void {
 export function clearAllProgress(): void {
   updateStorage<AllProgress>(STORAGE_KEY, () => ({}), {});
   updateStorage<StudySessionsMap>(SESSIONS_MAP_KEY, () => ({ sessions: [] }), {});
-  updateStorage<SessionRecords>(RECORDS_KEY, () => ({}), {});
   
   // 清除所有会话数据
   const sessionsMap = getStorage<StudySessionsMap>(SESSIONS_MAP_KEY, { sessions: [] });
@@ -119,7 +117,7 @@ export function clearAllProgress(): void {
  */
 export function saveSession(session: StudySession): void {
   const sessionKey = getSessionKey(session.id);
-  updateStorage<StudySession>(sessionKey, () => session, {});
+  updateStorage<StudySession>(sessionKey, () => session, session);
   
   // 更新会话映射
   updateStorage<StudySessionsMap>(SESSIONS_MAP_KEY, (prev) => {
@@ -133,25 +131,6 @@ export function saveSession(session: StudySession): void {
       currentSessionId: session.id
     };
   }, { sessions: [] });
-  
-  // 更新会话记录
-  updateStorage<SessionRecords>(RECORDS_KEY, (prev) => {
-    const completedCount = session.currentIndex + 1;
-    const isCompleted = session.currentIndex >= session.wordList.length - 1;
-    
-    return {
-      ...prev,
-      [session.id]: {
-        id: session.id,
-        deckId: session.deckId,
-        wordCount: session.wordList.length,
-        completedCount: isCompleted ? session.wordList.length : completedCount,
-        createdAt: session.createdAt,
-        updatedAt: session.updatedAt,
-        completedAt: isCompleted ? Date.now() : undefined
-      }
-    };
-  }, {});
 }
 
 /**
@@ -161,7 +140,26 @@ export function saveSession(session: StudySession): void {
  */
 export function loadSession(sessionId: string): StudySession | null {
   const sessionKey = getSessionKey(sessionId);
-  return getStorage<StudySession | null>(sessionKey, null);
+  const session = getStorage<any>(sessionKey, null);
+  
+  if (!session) return null;
+
+  // 迁移旧数据：如果存在 wordList 但不存在 words
+  if (session.wordList && !session.words) {
+    console.log(`Migrating session ${sessionId} from legacy format...`);
+    const migratedSession: StudySession = {
+      ...session,
+      words: session.wordList.map((id: string) => ({ id })),
+    };
+    // 删除旧属性
+    delete (migratedSession as any).wordList;
+    
+    // 保存迁移后的数据
+    saveSession(migratedSession);
+    return migratedSession;
+  }
+
+  return session as StudySession;
 }
 
 /**
@@ -191,26 +189,20 @@ export function clearSession(sessionId: string): void {
       currentSessionId: prev.currentSessionId === sessionId ? undefined : prev.currentSessionId
     };
   }, { sessions: [] });
-  
-  // 更新会话记录
-  updateStorage<SessionRecords>(RECORDS_KEY, (prev) => {
-    const { [sessionId]: _, ...rest } = prev;
-    return rest;
-  }, {});
 }
 
 /**
  * 创建新的学习会话
  * @param deckId 卡包ID
- * @param wordList 单词ID列表
+ * @param wordIds 单词ID列表
  * @returns 新的学习会话
  */
-export function createSession(deckId: string, wordList: string[]): StudySession {
+export function createSession(deckId: string, wordIds: string[]): StudySession {
   const sessionId = generateSessionId(deckId);
   const session: StudySession = {
     id: sessionId,
     deckId,
-    wordList,
+    words: wordIds.map(id => ({ id })),
     currentIndex: 0,
     createdAt: Date.now(),
     updatedAt: Date.now(),
@@ -218,14 +210,6 @@ export function createSession(deckId: string, wordList: string[]): StudySession 
   };
   saveSession(session);
   return session;
-}
-
-/**
- * 获取所有会话记录
- * @returns 所有会话记录
- */
-export function getAllSessionRecords(): SessionRecords {
-  return getStorage<SessionRecords>(RECORDS_KEY, {});
 }
 
 /**
