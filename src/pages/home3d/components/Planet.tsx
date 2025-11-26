@@ -1,5 +1,5 @@
-import React, { useRef, useState } from 'react';
-import { useFrame, ThreeEvent } from '@react-three/fiber';
+import React, { useRef, useState, useEffect } from 'react';
+import { useFrame, ThreeEvent, useLoader } from '@react-three/fiber';
 import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import Satellite from './Satellite';
@@ -17,6 +17,9 @@ interface PlanetProps {
 export default function Planet({ position, deckName, deckId, stats, color, onClick }: PlanetProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
+  
+  // Load Earth texture for cet4 deck
+  const earthTexture = deckId === 'cet4' ? useLoader(THREE.TextureLoader, '/Dictionaries/earth_texture.png') : null;
 
   useFrame((state, delta) => {
     if (meshRef.current) {
@@ -70,7 +73,7 @@ export default function Planet({ position, deckName, deckId, stats, color, onCli
 
   return (
     <group position={position}>
-      {/* Planet - Transparent glass effect */}
+      {/* Planet - Transparent glass effect with Earth texture for cet4 */}
       <mesh
         ref={meshRef}
         onClick={handleClick}
@@ -78,30 +81,49 @@ export default function Planet({ position, deckName, deckId, stats, color, onCli
         onPointerOut={() => setHovered(false)}
       >
         <sphereGeometry args={[1, 64, 64]} />
-        <meshPhysicalMaterial
-          color={color}
-          transparent
-          opacity={0.6}
-          metalness={0.1}
-          roughness={0.1}
-          transmission={0.9}
-          thickness={0.5}
-          envMapIntensity={1}
-          clearcoat={1}
-          clearcoatRoughness={0.1}
-        />
+        {earthTexture ? (
+          // Earth texture for cet4
+          <meshPhysicalMaterial
+            map={earthTexture}
+            transparent
+            opacity={0.85}
+            metalness={0.1}
+            roughness={0.3}
+            transmission={0.3}
+            thickness={0.5}
+            envMapIntensity={1}
+            clearcoat={0.8}
+            clearcoatRoughness={0.2}
+          />
+        ) : (
+          // Glass effect for other decks
+          <meshPhysicalMaterial
+            color={color}
+            transparent
+            opacity={0.6}
+            metalness={0.1}
+            roughness={0.1}
+            transmission={0.9}
+            thickness={0.5}
+            envMapIntensity={1}
+            clearcoat={1}
+            clearcoatRoughness={0.1}
+          />
+        )}
       </mesh>
 
-      {/* Wireframe overlay for Earth-like grid */}
-      <mesh scale={1.01}>
-        <sphereGeometry args={[1, 32, 32]} />
-        <meshBasicMaterial
-          color={color}
-          wireframe
-          transparent
-          opacity={hovered ? 0.3 : 0.2}
-        />
-      </mesh>
+      {/* Wireframe overlay for Earth-like grid - only for non-Earth texture planets */}
+      {!earthTexture && (
+        <mesh scale={1.01}>
+          <sphereGeometry args={[1, 32, 32]} />
+          <meshBasicMaterial
+            color={color}
+            wireframe
+            transparent
+            opacity={hovered ? 0.3 : 0.2}
+          />
+        </mesh>
+      )}
 
       {/* Inner glow */}
       <mesh scale={0.95}>
