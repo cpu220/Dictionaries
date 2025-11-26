@@ -5,20 +5,16 @@ import { NavBar, Button } from 'antd-mobile';
 import { history } from 'umi';
 import Scene from './components/Scene';
 import { getAllDecksProgress, DeckStats } from './utils/deckProgress';
+import { DECKS } from '@/consts/decks';
 
 export default function Home3D() {
   const [decksProgress, setDecksProgress] = useState<Record<string, DeckStats>>({});
   const [loading, setLoading] = useState(true);
 
-  const decks = [
-    { id: 'cet4', name: 'CET-4 (Mock)', color: '#3498db' },
-    { id: 'cet4_imported', name: 'CET-4 (Full)', color: '#e74c3c' },
-  ];
-
   useEffect(() => {
     // Load progress data
     async function loadProgress() {
-      const deckIds = decks.map(d => d.id);
+      const deckIds = DECKS.map(d => d.id);
       const progress = await getAllDecksProgress(deckIds);
       console.log('3D Home - Loaded progress:', progress);
       setDecksProgress(progress);
@@ -67,7 +63,7 @@ export default function Home3D() {
           style={{ width: '100%', height: '100%' }}
         >
           <Scene 
-            decks={decks}
+            decks={DECKS}
             decksProgress={decksProgress}
             onDeckClick={handleDeckClick}
           />

@@ -1,0 +1,84 @@
+/* CSS Reset */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  width: 100%;
+  height: 100%;
+}
+
+/* 设置根字体大小为屏幕宽度的1/10，方便rem计算 */
+/* 以375px设计稿为基准，1rem = 37.5px */
+html {
+  font-size: calc(100vw / 10);
+}
+
+/* 限制最大和最小字体大小 */
+@media screen and (min-width: 750px) {
+  html {
+    font-size: 75px;
+  }
+}
+
+@media screen and (max-width: 320px) {
+  html {
+    font-size: 32px;
+  }
+}
+
+body {
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
+    "Ubuntu", "Cantarell", "Fira Sans", "Droid Sans", "Helvetica Neue",
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  overflow-x: hidden;
+}
+
+/* 重置列表样式 */
+ul,
+ol {
+  list-style: none;
+}
+
+/* 重置链接样式 */
+a {
+  text-decoration: none;
+  color: inherit;
+}
+
+/* 重置按钮样式 */
+button {
+  border: none;
+  outline: none;
+  background: none;
+  cursor: pointer;
+}
+
+/* 重置输入框样式 */
+input,
+textarea {
+  border: none;
+  outline: none;
+  background: none;
+}
+
+/* 图片自适应 */
+img {
+  max-width: 100%;
+  height: auto;
+  display: block;
+}
+
+/* 清除浮动 */
+.clearfix::after {
+  content: "";
+  display: block;
+  clear: both;
+}

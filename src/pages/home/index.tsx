@@ -2,12 +2,9 @@ import React from 'react';
 import { Button, List, NavBar } from 'antd-mobile';
 import { history } from 'umi';
 import { AppOutline } from 'antd-mobile-icons';
+import { DECKS } from '@/consts/decks';
 
 export default function HomePage() {
-  const decks = [
-    { id: 'cet4', name: 'CET-4 Vocabulary (Mock)', count: 3 },
-    { id: 'cet4_imported', name: 'CET-4 Vocabulary (Full)', count: 4028 },
-  ];
 
   return (
     <div style={{ padding: '0 0 20px 0', minHeight: '100vh', background: '#f5f5f5' }}>
@@ -17,7 +14,7 @@ export default function HomePage() {
         <h2 style={{ marginBottom: '20px', fontWeight: '600' }}>Select a Deck</h2>
 
         <List header='Available Decks'>
-          {decks.map(deck => (
+          {DECKS.map(deck => (
             <List.Item
               key={deck.id}
               prefix={<AppOutline />}

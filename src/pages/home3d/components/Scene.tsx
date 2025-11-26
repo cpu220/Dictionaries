@@ -3,15 +3,10 @@ import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
 import Planet from './Planet';
 import { DeckStats } from '../utils/deckProgress';
-
-interface Deck {
-  id: string;
-  name: string;
-  color: string;
-}
+import { DeckConfig } from '@/consts/decks';
 
 interface SceneProps {
-  decks: Deck[];
+  decks: DeckConfig[];
   decksProgress: Record<string, DeckStats>;
   onDeckClick: (deckId: string) => void;
 }
@@ -71,6 +66,7 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
             deckId={deck.id}
             stats={decksProgress[deck.id] || { totalWords: 0, lowProficiency: [], mediumProficiency: [], highProficiency: [] }}
             color={deck.color}
+            textureUrl={deck.textureUrl}
             onClick={() => onDeckClick(deck.id)}
           />
         );

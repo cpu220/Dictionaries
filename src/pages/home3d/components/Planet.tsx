@@ -11,15 +11,16 @@ interface PlanetProps {
   deckId: string;
   stats: DeckStats;
   color: string;
+  textureUrl?: string;
   onClick: () => void;
 }
 
-export default function Planet({ position, deckName, deckId, stats, color, onClick }: PlanetProps) {
+export default function Planet({ position, deckName, deckId, stats, color, textureUrl, onClick }: PlanetProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   
-  // Load Earth texture for cet4 deck
-  const earthTexture = deckId === 'cet4' ? useLoader(THREE.TextureLoader, '/Dictionaries/earth_texture.png') : null;
+  // Load texture if URL is provided
+  const texture = textureUrl ? useLoader(THREE.TextureLoader, textureUrl) : null;
 
   useFrame((state, delta) => {
     if (meshRef.current) {
@@ -81,10 +82,10 @@ export default function Planet({ position, deckName, deckId, stats, color, onCli
         onPointerOut={() => setHovered(false)}
       >
         <sphereGeometry args={[1, 64, 64]} />
-        {earthTexture ? (
-          // Earth texture for cet4
+        {texture ? (
+          // Custom texture
           <meshPhysicalMaterial
-            map={earthTexture}
+            map={texture}
             transparent
             opacity={0.85}
             metalness={0.1}
@@ -96,7 +97,7 @@ export default function Planet({ position, deckName, deckId, stats, color, onCli
             clearcoatRoughness={0.2}
           />
         ) : (
-          // Glass effect for other decks
+          // Glass effect for decks without texture
           <meshPhysicalMaterial
             color={color}
             transparent
@@ -112,8 +113,8 @@ export default function Planet({ position, deckName, deckId, stats, color, onCli
         )}
       </mesh>
 
-      {/* Wireframe overlay for Earth-like grid - only for non-Earth texture planets */}
-      {!earthTexture && (
+      {/* Wireframe overlay for Earth-like grid - only for non-texture planets */}
+      {!texture && (
         <mesh scale={1.01}>
           <sphereGeometry args={[1, 32, 32]} />
           <meshBasicMaterial
