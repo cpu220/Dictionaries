@@ -4,6 +4,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import Satellite from './Satellite';
 import { DeckStats } from '../utils/deckProgress';
+import { PLANET_CONFIG } from '@/consts/home3d';
 
 interface PlanetProps {
   position: [number, number, number];
@@ -24,7 +25,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
   useFrame((state, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * 0.2;
+      meshRef.current.rotation.y += delta * PLANET_CONFIG.ROTATION_SPEED * 2; // 稍微增加旋转速度，使自转更明显
     }
   });
 
@@ -81,7 +82,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <sphereGeometry args={[1, 64, 64]} />
+        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 64, 64]} />
         {texture ? (
           // Custom texture
           <meshPhysicalMaterial
@@ -116,7 +117,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
       {/* Wireframe overlay for Earth-like grid - only for non-texture planets */}
       {!texture && (
         <mesh scale={1.01}>
-          <sphereGeometry args={[1, 32, 32]} />
+          <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
           <meshBasicMaterial
             color={color}
             wireframe
@@ -128,7 +129,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Inner glow */}
       <mesh scale={0.95}>
-        <sphereGeometry args={[1, 32, 32]} />
+        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -138,7 +139,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Atmosphere glow - outer layer */}
       <mesh scale={1.15}>
-        <sphereGeometry args={[1, 32, 32]} />
+        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -149,7 +150,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Atmosphere glow - middle layer */}
       <mesh scale={1.08}>
-        <sphereGeometry args={[1, 32, 32]} />
+        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent

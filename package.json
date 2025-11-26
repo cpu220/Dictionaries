@@ -7,7 +7,8 @@
     "postinstall": "umi setup",
     "setup": "umi setup",
     "start": "npm run dev",
-    "zip": "node scripts/build-zip.js"
+    "zip": "node scripts/build-zip.js",
+    "b":"yarn build && yarn zip"
   },
   "dependencies": {
     "@react-three/drei": "^9.105.6",

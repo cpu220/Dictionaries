@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { Canvas } from '@react-three/fiber';
 import { OrbitControls } from '@react-three/drei';
 import { NavBar, Button } from 'antd-mobile';
@@ -6,6 +6,7 @@ import { history } from 'umi';
 import Scene from './components/Scene';
 import { getAllDecksProgress, DeckStats } from './utils/deckProgress';
 import { DECKS } from '@/consts/decks';
+import { SCENE_CONFIG } from '@/consts/home3d';
 
 export default function Home3D() {
   const [decksProgress, setDecksProgress] = useState<Record<string, DeckStats>>({});
@@ -59,7 +60,10 @@ export default function Home3D() {
 
       {!loading && (
         <Canvas
-          camera={{ position: [0, 5, 12], fov: 60 }}
+          camera={{ 
+            position: [SCENE_CONFIG.INITIAL_CAMERA_POSITION.x, SCENE_CONFIG.INITIAL_CAMERA_POSITION.y, SCENE_CONFIG.INITIAL_CAMERA_POSITION.z], 
+            fov: SCENE_CONFIG.CAMERA_FOV 
+          }}
           style={{ width: '100%', height: '100%' }}
         >
           <Scene 
@@ -71,8 +75,8 @@ export default function Home3D() {
             enablePan={true}
             enableZoom={true}
             enableRotate={true}
-            minDistance={5}
-            maxDistance={20}
+            minDistance={SCENE_CONFIG.CAMERA_MIN_DISTANCE}
+            maxDistance={SCENE_CONFIG.CAMERA_MAX_DISTANCE}
           />
         </Canvas>
       )}

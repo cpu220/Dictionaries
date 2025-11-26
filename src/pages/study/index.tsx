@@ -6,6 +6,7 @@ import { getWords } from '@/utils/data';
 import { Word, UserProgress } from '@/interfaces';
 import { calculateNextReview, getInitialProgress } from '@/utils/scheduler';
 import { saveProgress, getProgress } from '@/utils/storage';
+import { SESSION_WORDS_COUNT } from '@/consts';
 
 export default function StudyPage() {
     const [searchParams] = useSearchParams();
@@ -22,10 +23,10 @@ export default function StudyPage() {
             // Filter words that are due for review (mock logic for now: show all or just first 10)
             // In a real app, we would filter based on getProgress(word.id).next_review_time < Date.now()
             
-            // For demo, let's shuffle and take 10 if it's a large deck
+            // For demo, let's shuffle and take a fixed number of words if it's a large deck
             let sessionWords = data;
-            if (data.length > 20) {
-                sessionWords = [...data].sort(() => Math.random() - 0.5).slice(0, 20);
+            if (data.length > SESSION_WORDS_COUNT) {
+                sessionWords = [...data].sort(() => Math.random() - 0.5).slice(0, SESSION_WORDS_COUNT);
             }
             
             setWords(sessionWords);

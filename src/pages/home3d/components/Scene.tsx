@@ -4,6 +4,7 @@ import * as THREE from 'three';
 import Planet from './Planet';
 import { DeckStats } from '../utils/deckProgress';
 import { DeckConfig } from '@/consts/decks';
+import { PLANET_CONFIG, SCENE_CONFIG } from '@/consts/home3d';
 
 interface SceneProps {
   decks: DeckConfig[];
@@ -13,11 +14,15 @@ interface SceneProps {
 
 export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps) {
   const starsRef = useRef<THREE.Points>(null);
+  const orbitAngleRef = useRef(0); // 用于跟踪轨道旋转角度
 
   useFrame((state, delta) => {
     if (starsRef.current) {
-      starsRef.current.rotation.y += delta * 0.05;
+      starsRef.current.rotation.y += delta * SCENE_CONFIG.STARS_ROTATION_SPEED;
     }
+    
+    // 更新轨道旋转角度
+    orbitAngleRef.current += delta * PLANET_CONFIG.ORBIT_ROTATION_SPEED;
   });
 
   // Create starfield background
@@ -39,7 +44,7 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
   starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
 
   // Position planets in a circular layout
-  const radius = 5;
+  const radius = PLANET_CONFIG.ORBIT_RADIUS;
   const angleStep = (Math.PI * 2) / decks.length;
 
   return (
@@ -52,11 +57,15 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
       {/* Starfield */}
       <points ref={starsRef} geometry={starsGeometry} material={starsMaterial} />
 
-      {/* Planets */}
+      {/* Planets - 围绕中心点旋转 */}
       {decks.map((deck, index) => {
-        const angle = index * angleStep;
-        const x = Math.cos(angle) * radius;
-        const z = Math.sin(angle) * radius;
+        // 基础角度加上轨道旋转角度，实现所有星球围绕中心点旋转
+        const baseAngle = index * angleStep;
+        const totalAngle = baseAngle + orbitAngleRef.current;
+        
+        // 计算旋转后的位置
+        const x = Math.cos(totalAngle) * radius;
+        const z = Math.sin(totalAngle) * radius;
         
         return (
           <Planet

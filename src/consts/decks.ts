@@ -11,14 +11,14 @@ export const DECKS: DeckConfig[] = [
     id: 'cet4',
     name: 'CET-4 Vocabulary (Mock)',
     count: 3,
-    color: '#3498db',
+    color: '#e74c3c',
     textureUrl: '', // Empty = use glass effect
   },
   {
     id: 'cet4_imported',
     name: 'CET-4 Vocabulary (Full)',
     count: 4028,
-    color: '#e74c3c',
+    color: '#3498db',
     textureUrl: '/Dictionaries/earth_texture.png', // Use Earth texture
   },
 ];

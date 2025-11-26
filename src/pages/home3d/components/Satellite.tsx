@@ -1,6 +1,7 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
+import { SATELLITE_CONFIG } from '@/consts/home3d';
 
 interface SatelliteProps {
   proficiencyLevel: 'low' | 'medium' | 'high';
@@ -38,7 +39,7 @@ export default function Satellite({ proficiencyLevel, orbitRadius, orbitSpeed, i
       
       const x = Math.cos(angleRef.current) * orbitRadius;
       const z = Math.sin(angleRef.current) * orbitRadius;
-      const y = Math.sin(angleRef.current * 2) * 0.3; // Add vertical wave motion
+      const y = Math.sin(angleRef.current * 2) * SATELLITE_CONFIG.VERTICAL_WAVE_AMPLITUDE; // Add vertical wave motion
       
       meshRef.current.position.set(x, y, z);
       

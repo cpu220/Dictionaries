@@ -20,9 +20,5 @@ export default {
     'process.env.NODE_ENV': JSON.stringify('production'),
   },
   
-  // 压缩配置
-  compression: {
-    gzip: true,
-    brotli: false,
-  },
+  // Umi内部已处理资源压缩，无需额外配置
 };

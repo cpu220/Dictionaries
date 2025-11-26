@@ -18,7 +18,7 @@ const mergedConfig = {
   ...webpackBaseConfig,
   ...envConfig,
   // 特殊处理headScripts等数组类型的配置项，进行合并而不是覆盖
-  headScripts: [...(envConfig.headScripts || [])]
+  // headScripts: [...(envConfig.headScripts || [])]
 };
 
 // 导出合并后的配置
