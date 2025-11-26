@@ -52,7 +52,7 @@ export default function ProfilePage() {
                                 clickable
                             >
                                 {word.word}
-                                <div style={{ fontSize: '0.12rem', color: '#888' }}>{word.translation}</div>
+                                <div style={{ fontSize: '0.32rem', color: '#888' }}>{word.translation}</div>
                             </List.Item>
                         ))}
                     </List>

@@ -48,7 +48,7 @@ export default function Home3D() {
           <Button
             size='small'
             onClick={handleBackToOriginal}
-            style={{ fontSize: '0.12rem' }}
+            style={{ fontSize: '0.32rem' }}
           >
             Back to 2D
           </Button>

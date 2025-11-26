@@ -6,7 +6,8 @@
     "build": "umi build",
     "postinstall": "umi setup",
     "setup": "umi setup",
-    "start": "npm run dev"
+    "start": "npm run dev",
+    "zip": "node scripts/build-zip.js"
   },
   "dependencies": {
     "@react-three/drei": "^9.105.6",
