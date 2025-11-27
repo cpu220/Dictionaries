@@ -4,6 +4,7 @@ import { ROOT_PATH } from './baseConfig';
  * 公共webpack配置，包含开发和生产环境共用的配置项
  */
 export default {
+  title: '知识星球',
    favicons: [
     '/Dictionaries/favicon.svg'
   ],

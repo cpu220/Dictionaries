@@ -30,9 +30,9 @@ export const PLANET_CONFIG: PlanetConfig = {
   ORBIT_ROTATION_SPEED: 0.15, // 增加轨道旋转速度，使旋转效果更明显
   
   // 卫星生成配置
-  MAX_SATELLITES: 200, // 最大卫星数量
-  SATELLITE_BASE_RADIUS: 0.4, // 卫星起始轨道半径
-  SATELLITE_RADIUS_INCREMENT: 0.15, // 不同难度等级的轨道间距
+  MAX_SATELLITES: 2000, // 最大卫星数量
+  SATELLITE_BASE_RADIUS: 0.5, // 卫星起始轨道半径
+  SATELLITE_RADIUS_INCREMENT: 0.2, // 不同难度等级的轨道间距
   SATELLITE_RADIUS_VARIATION: 0.5, // 同一等级内的轨道半径随机波动范围
 };
 
@@ -57,7 +57,7 @@ export const SATELLITE_CONFIG: SatelliteConfig = {
   
   // 卫星运动配置
   ORBIT_SPEED_MIN: 0.3, // 最小公转速度
-  ORBIT_SPEED_RANGE: 0.4, // 公转速度随机范围
+  ORBIT_SPEED_RANGE: 0.8, // 公转速度随机范围
   SELF_ROTATION_SPEED: 2, // 自转速度
   
   // 卫星高度变化幅度

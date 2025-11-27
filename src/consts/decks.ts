@@ -20,7 +20,7 @@ export const DECKS: DeckConfig[] = [
     planetConfig: {
       ORBIT_RADIUS: 1, // Custom orbit radius
       BASE_RADIUS: 0.1, // Slightly larger
-      ROTATION_SPEED: 4.01, // Slower rotation for Earth
+      // ROTATION_SPEED: 4.01, // Slower rotation for Earth
     },
     satelliteConfig: {
       SIZE: 0.06, // Larger satellites
@@ -35,7 +35,7 @@ export const DECKS: DeckConfig[] = [
     planetConfig: {
       ORBIT_RADIUS: 2, // Further out
       BASE_RADIUS: 0.6, // Larger planet (Earth)
-      ROTATION_SPEED: 0.05, // Slower rotation for Earth
+      // ROTATION_SPEED: 0.05, // Slower rotation for Earth
     },
     satelliteConfig: {
       ORBIT_SPEED_MIN: 0.2, // Slower satellites

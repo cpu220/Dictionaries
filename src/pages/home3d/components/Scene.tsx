@@ -12,18 +12,41 @@ interface SceneProps {
   onDeckClick: (deckId: string) => void;
 }
 
+// Helper component for individual orbit rotation
+const OrbitContainer = ({
+  speed,
+  radius,
+  initialAngle,
+  children
+}: {
+  speed: number;
+  radius: number;
+  initialAngle: number;
+  children: React.ReactNode;
+}) => {
+  const groupRef = useRef<THREE.Group>(null);
+
+  useFrame((state, delta) => {
+    if (groupRef.current) {
+      groupRef.current.rotation.y += delta * speed;
+    }
+  });
+
+  return (
+    <group ref={groupRef} rotation={[0, initialAngle, 0]}>
+      <group position={[radius, 0, 0]}>
+        {children}
+      </group>
+    </group>
+  );
+};
+
 export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps) {
   const starsRef = useRef<THREE.Points>(null);
-  const solarSystemRef = useRef<THREE.Group>(null);
 
   useFrame((state, delta) => {
     if (starsRef.current) {
       starsRef.current.rotation.y += delta * SCENE_CONFIG.STARS_ROTATION_SPEED;
-    }
-    
-    // Rotate the entire solar system
-    if (solarSystemRef.current) {
-      solarSystemRef.current.rotation.y += delta * PLANET_CONFIG.ORBIT_ROTATION_SPEED;
     }
   });
 
@@ -66,26 +89,26 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
       <pointLight position={[0, 0, 0]} intensity={2} distance={20} color="#ffaa00" />
 
       {/* Planets - 围绕中心点旋转 */}
-      {/* Solar System Container - Rotates around center */}
-      <group ref={solarSystemRef}>
-        {decks.map((deck, index) => {
-          // Merge configurations
-          const planetConfig = { ...PLANET_CONFIG, ...deck.planetConfig };
-          const satelliteConfig = { ...SATELLITE_CONFIG, ...deck.satelliteConfig };
+      {decks.map((deck, index) => {
+        // Merge configurations
+        const planetConfig = { ...PLANET_CONFIG, ...deck.planetConfig };
+        const satelliteConfig = { ...SATELLITE_CONFIG, ...deck.satelliteConfig };
 
-          // 获取该星球的轨道半径
-          const radius = planetConfig.ORBIT_RADIUS;
-            
-          // 随机分布起始角度，避免所有星球排成一条线
-          const angle = (index / decks.length) * Math.PI * 2; 
-          
-          const x = Math.cos(angle) * radius;
-          const z = Math.sin(angle) * radius;
-          
-          return (
+        // 获取该星球的轨道半径
+        const radius = planetConfig.ORBIT_RADIUS;
+
+        // 随机分布起始角度，避免所有星球排成一条线
+        const angle = (index / decks.length) * Math.PI * 2;
+
+        return (
+          <OrbitContainer
+            key={deck.id}
+            speed={planetConfig.ORBIT_ROTATION_SPEED}
+            radius={radius}
+            initialAngle={angle}
+          >
             <Planet
-              key={deck.id}
-              position={[x, 0, z]}
+              position={[0, 0, 0]} // Position handled by container
               deckName={deck.name}
               deckId={deck.id}
               stats={decksProgress[deck.id] || { totalWords: 0, again: [], hard: [], good: [], easy: [] }}
@@ -95,9 +118,9 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
               satelliteConfig={satelliteConfig}
               onClick={() => onDeckClick(deck.id)}
             />
-          );
-        })}
-      </group>
+          </OrbitContainer>
+        );
+      })}
     </>
   );
 }

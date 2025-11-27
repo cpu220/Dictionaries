@@ -95,10 +95,10 @@ export default function Home3D() {
         borderRadius: '0.08rem',
         zIndex: 10,
       }}>
-        <p style={{ margin: '0 0 0.05rem 0' }}>🖱️ Drag to rotate • 🔍 Scroll to zoom • Click planet to study</p>
-        <p style={{ margin: 0, fontSize: '0.12rem', color: '#aaa' }}>
+        <p style={{ margin: '0 0 0.05rem 0',fontSize:'0.3rem' }}>Drag to rotate • Scroll to zoom • Click planet to study</p>
+        {/* <p style={{ margin: 0, fontSize: '0.3rem', color: '#aaa' }}>
           🔴 Low Proficiency • 🟡 Medium • 🟢 High
-        </p>
+        </p> */}
       </div>
     </div>
   );
