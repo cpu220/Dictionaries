@@ -7,25 +7,37 @@
  */
 export const PLANET_CONFIG = {
   // 星球基础大小
-  BASE_RADIUS: 0.8, // 减小默认大小，使星球在初始视角中可见
+  BASE_RADIUS: 0.3, // 减小默认大小，使星球在初始视角中可见
   
   // 星球旋转速度
   ROTATION_SPEED: 0.1, // 降低旋转速度，使视觉效果更舒适
   
   // 轨道半径（星球围绕中心点的距离）
-  ORBIT_RADIUS: 4, // 减小轨道半径，使星球在视图范围内
+  ORBIT_RADIUS: 2.5, // 减小轨道半径，使星球在视图范围内
   
   // 轨道旋转速度（星球围绕中心点旋转的速度）
   ORBIT_ROTATION_SPEED: 0.15, // 增加轨道旋转速度，使旋转效果更明显
+  
+  // 卫星生成配置
+  MAX_SATELLITES: 200, // 最大卫星数量
+  SATELLITE_BASE_RADIUS: 0.4, // 卫星起始轨道半径
+  SATELLITE_RADIUS_INCREMENT: 0.15, // 不同难度等级的轨道间距
+  SATELLITE_RADIUS_VARIATION: 0.5, // 同一等级内的轨道半径随机波动范围
 };
 
 /**
  * 卫星相关配置
  */
 export const SATELLITE_CONFIG = {
-  // 卫星轨道配置
-  ORBIT_SPEED_BASE: 0.3,
-  ORBIT_SPEED_VARIATION: 0.4,
+  // 卫星外观
+  SIZE: 0.04, // 卫星大小
+  OPACITY_MAIN: 0.7, // 主体透明度
+  OPACITY_GLOW: 0.3, // 光晕透明度
+  
+  // 卫星运动配置
+  ORBIT_SPEED_MIN: 0.3, // 最小公转速度
+  ORBIT_SPEED_RANGE: 0.4, // 公转速度随机范围
+  SELF_ROTATION_SPEED: 2, // 自转速度
   
   // 卫星高度变化幅度
   VERTICAL_WAVE_AMPLITUDE: 0.3,
@@ -39,7 +51,7 @@ export const SCENE_CONFIG = {
   STARS_ROTATION_SPEED: 0.05,
   
   // 初始相机位置
-  INITIAL_CAMERA_POSITION: { x: 0, y: 5, z: 12 },
+  INITIAL_CAMERA_POSITION: { x: 0, y: 3, z: 8 },
   
   // 相机FOV
   CAMERA_FOV: 60,

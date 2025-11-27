@@ -3,11 +3,14 @@ import { loadAllProgress } from '@/utils/storage';
 import { getSessionsMap, loadSession } from '@/utils/storage/progress';
 import { getWords } from '@/utils/data';
 
+import { DIFFICULTY_LEVELS } from '@/consts/difficulty';
+
 export interface DeckStats {
   totalWords: number;
-  lowProficiency: UserProgress[];
-  mediumProficiency: UserProgress[];
-  highProficiency: UserProgress[];
+  again: UserProgress[];
+  hard: UserProgress[];
+  good: UserProgress[];
+  easy: UserProgress[];
 }
 
 export async function getDeckProgress(deckId: string): Promise<DeckStats> {
@@ -19,8 +22,8 @@ export async function getDeckProgress(deckId: string): Promise<DeckStats> {
   const deckWords = await getWords(deckId);
   console.log(`Loaded ${deckWords.length} words for deck ${deckId}`);
   
-  // Get learned word IDs from sessions
-  const sessionLearnedWordIds = new Set<string>();
+  // Get learned word IDs and their results from sessions
+  const sessionResults = new Map<string, number>();
   const sessionsMap = getSessionsMap();
   
   if (sessionsMap && sessionsMap.sessions) {
@@ -30,59 +33,79 @@ export async function getDeckProgress(deckId: string): Promise<DeckStats> {
         // Words up to currentIndex are considered learned/encountered
         const learnedCount = session.currentIndex + 1;
         for (let i = 0; i < learnedCount && i < session.words.length; i++) {
-          sessionLearnedWordIds.add(session.words[i].id);
+          const wordObj = session.words[i];
+          if (wordObj.result !== undefined) {
+             sessionResults.set(wordObj.id, wordObj.result);
+          } else if (!sessionResults.has(wordObj.id)) {
+             // If no result but encountered, default to AGAIN value
+             sessionResults.set(wordObj.id, DIFFICULTY_LEVELS.AGAIN.value);
+          }
         }
       }
     }
   }
-  console.log(`Found ${sessionLearnedWordIds.size} words from sessions for deck ${deckId}`);
+  console.log(`Found ${sessionResults.size} words from sessions for deck ${deckId}`);
 
   // Filter progress to only include words from this deck
   const deckProgress: UserProgress[] = [];
   
+  // Helper to get result value for a word
+  const getWordResult = (wordId: string): number => {
+      // 1. Check session result first (most recent interaction)
+      if (sessionResults.has(wordId)) {
+          return sessionResults.get(wordId)!;
+      }
+      // 2. Check stored progress (ease_factor mapping is tricky, so let's rely on session result for now if available)
+      // If we only have stored progress (e.g. from old version), we might need to map ease_factor back to result.
+      // For now, let's assume if it's in allProgress but not in sessionResults, we treat it as 'Good' or based on ease?
+      // Actually, let's just use the session result logic for coloring.
+      // If we want to support long-term storage coloring, we'd need to store the 'last_result' in UserProgress.
+      // But for this task, the user emphasized session results.
+      return 0; // Not learned
+  };
+
   deckWords.forEach(word => {
-    // 1. Check if there is explicit progress
-    const progress = allProgress[word.id];
-    if (progress) {
-      deckProgress.push(progress);
-    } 
-    // 2. If no explicit progress, check if it was encountered in a session
-    else if (sessionLearnedWordIds.has(word.id)) {
-      // Create a default "low proficiency" progress for session-only words
-      deckProgress.push({
-        word_id: word.id,
-        next_review_time: Date.now(),
-        interval: 0,
-        ease_factor: 0, // 0 ensures it goes to low proficiency (< 2.0)
-        history: []
-      });
+    const result = getWordResult(word.id);
+    if (result > 0) {
+        deckProgress.push({
+            word_id: word.id,
+            next_review_time: Date.now(),
+            interval: 0,
+            ease_factor: result, // Storing result in ease_factor for temporary passing
+            history: []
+        });
     }
   });
 
-  console.log(`Total words with progress (stored + session): ${deckProgress.length}`);
+  console.log(`Total words with progress: ${deckProgress.length}`);
 
   const stats: DeckStats = {
     totalWords: deckProgress.length,
-    lowProficiency: [],
-    mediumProficiency: [],
-    highProficiency: [],
+    again: [],
+    hard: [],
+    good: [],
+    easy: [],
   };
 
   deckProgress.forEach(progress => {
-    if (progress.ease_factor < 2.0) {
-      stats.lowProficiency.push(progress);
-    } else if (progress.ease_factor < 2.5) {
-      stats.mediumProficiency.push(progress);
-    } else {
-      stats.highProficiency.push(progress);
+    const result = progress.ease_factor; // We stored result here
+    if (result === DIFFICULTY_LEVELS.AGAIN.value) {
+        stats.again.push(progress);
+    } else if (result === DIFFICULTY_LEVELS.HARD.value) {
+        stats.hard.push(progress);
+    } else if (result === DIFFICULTY_LEVELS.GOOD.value) {
+        stats.good.push(progress);
+    } else if (result === DIFFICULTY_LEVELS.EASY.value) {
+        stats.easy.push(progress);
     }
   });
 
   console.log(`Stats for ${deckId}:`, {
     total: stats.totalWords,
-    low: stats.lowProficiency.length,
-    medium: stats.mediumProficiency.length,
-    high: stats.highProficiency.length,
+    again: stats.again.length,
+    hard: stats.hard.length,
+    good: stats.good.length,
+    easy: stats.easy.length,
   });
 
   return stats;

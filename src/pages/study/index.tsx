@@ -7,6 +7,7 @@ import { Word, UserProgress, StudySession } from '@/interfaces';
 import { calculateNextReview, getInitialProgress } from '@/utils/scheduler';
 import { saveProgress, getProgress, saveSession, loadCurrentSession, loadSession, clearSession, createSession } from '@/utils/storage/progress';
 import { SESSION_WORDS_COUNT } from '@/consts';
+import { DIFFICULTY_LEVELS } from '@/consts/difficulty';
 
 export default function StudyPage() {
     const [searchParams] = useSearchParams();
@@ -218,22 +219,18 @@ export default function StudyPage() {
                     boxShadow: '0 -0.02rem 0.1rem rgba(0,0,0,0.05)'
                 }}>
                     <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: '0.1rem' }}>
-                        <Button block color='danger' onClick={() => handleScore(1)}>
-                            Again
-                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>&lt; 1m</div>
-                        </Button>
-                        <Button block color='warning' onClick={() => handleScore(5)}>
-                            Hard
-                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>2d</div>
-                        </Button>
-                        <Button block color='primary' fill='outline' onClick={() => handleScore(8)}>
-                            Good
-                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>2w</div>
-                        </Button>
-                        <Button block color='success' fill='outline' onClick={() => handleScore(10)}>
-                            Easy
-                            <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>1mo</div>
-                        </Button>
+                        {Object.values(DIFFICULTY_LEVELS).map((level) => (
+                            <Button 
+                                key={level.value}
+                                block 
+                                color={level.antColor} 
+                                fill={level.antColor === 'primary' || level.antColor === 'success' ? 'outline' : 'solid'}
+                                onClick={() => handleScore(level.value)}
+                            >
+                                {level.label}
+                                <div style={{ fontSize: '0.4rem', opacity: 0.8 }}>{level.description}</div>
+                            </Button>
+                        ))}
                     </div>
                 </div>
             )}

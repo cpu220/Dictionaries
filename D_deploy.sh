@@ -1,0 +1,1 @@
+rm -rf Dictionaries/* && unzip Dictionaries.zip -d Dictionaries && mv Dictionaries/dist/* Dictionaries/

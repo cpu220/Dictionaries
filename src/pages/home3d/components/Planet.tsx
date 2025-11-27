@@ -4,7 +4,8 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import Satellite from './Satellite';
 import { DeckStats } from '../utils/deckProgress';
-import { PLANET_CONFIG } from '@/consts/home3d';
+import { PLANET_CONFIG, SATELLITE_CONFIG } from '@/consts/home3d';
+import { DIFFICULTY_LEVELS } from '@/consts/difficulty';
 
 interface PlanetProps {
   position: [number, number, number];
@@ -36,23 +37,22 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
   // Generate satellites
   const satellites: JSX.Element[] = [];
-  const maxSatellites = 200;
   
   // Helper function to create satellites for a proficiency level
   const addSatellites = (
     count: number, 
-    proficiencyLevel: 'low' | 'medium' | 'high',
+    color: string,
     baseRadius: number
   ) => {
     for (let i = 0; i < count; i++) {
-      const orbitRadius = baseRadius + Math.random() * 0.5;
-      const orbitSpeed = 0.3 + Math.random() * 0.4;
+      const orbitRadius = baseRadius + Math.random() * PLANET_CONFIG.SATELLITE_RADIUS_VARIATION;
+      const orbitSpeed = SATELLITE_CONFIG.ORBIT_SPEED_MIN + Math.random() * SATELLITE_CONFIG.ORBIT_SPEED_RANGE;
       const initialAngle = Math.random() * Math.PI * 2;
       
       satellites.push(
         <Satellite
-          key={`${proficiencyLevel}-${i}`}
-          proficiencyLevel={proficiencyLevel}
+          key={`${color}-${i}`}
+          color={color}
           orbitRadius={orbitRadius}
           orbitSpeed={orbitSpeed}
           initialAngle={initialAngle}
@@ -63,15 +63,26 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
   // Limit total satellites
   const totalWords = stats.totalWords;
+  const maxSatellites = PLANET_CONFIG.MAX_SATELLITES;
   const scaleFactor = totalWords > maxSatellites ? maxSatellites / totalWords : 1;
   
-  const lowCount = Math.floor(stats.lowProficiency.length * scaleFactor);
-  const mediumCount = Math.floor(stats.mediumProficiency.length * scaleFactor);
-  const highCount = Math.floor(stats.highProficiency.length * scaleFactor);
+  const againCount = Math.floor(stats.again.length * scaleFactor);
+  const hardCount = Math.floor(stats.hard.length * scaleFactor);
+  const goodCount = Math.floor(stats.good.length * scaleFactor);
+  const easyCount = Math.floor(stats.easy.length * scaleFactor);
 
-  addSatellites(lowCount, 'low', 1.2);
-  addSatellites(mediumCount, 'medium', 1.35);
-  addSatellites(highCount, 'high', 1.5);
+  let currentRadius = PLANET_CONFIG.SATELLITE_BASE_RADIUS;
+  
+  addSatellites(againCount, DIFFICULTY_LEVELS.AGAIN.color, currentRadius);
+  currentRadius += PLANET_CONFIG.SATELLITE_RADIUS_INCREMENT;
+  
+  addSatellites(hardCount, DIFFICULTY_LEVELS.HARD.color, currentRadius);
+  currentRadius += PLANET_CONFIG.SATELLITE_RADIUS_INCREMENT;
+  
+  addSatellites(goodCount, DIFFICULTY_LEVELS.GOOD.color, currentRadius);
+  currentRadius += PLANET_CONFIG.SATELLITE_RADIUS_INCREMENT;
+  
+  addSatellites(easyCount, DIFFICULTY_LEVELS.EASY.color, currentRadius);
 
   return (
     <group position={position}>

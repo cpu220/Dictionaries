@@ -4,31 +4,13 @@ import * as THREE from 'three';
 import { SATELLITE_CONFIG } from '@/consts/home3d';
 
 interface SatelliteProps {
-  proficiencyLevel: 'low' | 'medium' | 'high';
+  color: string;
   orbitRadius: number;
   orbitSpeed: number;
   initialAngle: number;
 }
 
-const PROFICIENCY_CONFIG = {
-  low: {
-    size: 0.05,
-    color: '#ff6b6b',
-    emissive: '#ff3333',
-  },
-  medium: {
-    size: 0.08,
-    color: '#ffd93d',
-    emissive: '#ffaa00',
-  },
-  high: {
-    size: 0.12,
-    color: '#6bcf7f',
-    emissive: '#33aa55',
-  },
-};
-
-export default function Satellite({ proficiencyLevel, orbitRadius, orbitSpeed, initialAngle }: SatelliteProps) {
+export default function Satellite({ color, orbitRadius, orbitSpeed, initialAngle }: SatelliteProps) {
   const meshRef = useRef<THREE.Group>(null);
   const angleRef = useRef(initialAngle);
 
@@ -44,24 +26,22 @@ export default function Satellite({ proficiencyLevel, orbitRadius, orbitSpeed, i
       meshRef.current.position.set(x, y, z);
       
       // Rotate the satellite itself
-      meshRef.current.rotation.x += delta * 2;
-      meshRef.current.rotation.y += delta * 2;
+      meshRef.current.rotation.x += delta * SATELLITE_CONFIG.SELF_ROTATION_SPEED;
+      meshRef.current.rotation.y += delta * SATELLITE_CONFIG.SELF_ROTATION_SPEED;
     }
   });
-
-  const config = PROFICIENCY_CONFIG[proficiencyLevel];
 
   return (
     <group ref={meshRef}>
       {/* Main transparent sphere */}
       <mesh>
-        <sphereGeometry args={[config.size, 16, 16]} />
+        <sphereGeometry args={[SATELLITE_CONFIG.SIZE, 16, 16]} />
         <meshPhysicalMaterial 
-          color={config.color}
-          emissive={config.emissive}
+          color={color}
+          emissive={color}
           emissiveIntensity={0.8}
           transparent
-          opacity={0.7}
+          opacity={SATELLITE_CONFIG.OPACITY_MAIN}
           metalness={0.2}
           roughness={0.1}
           transmission={0.5}
@@ -72,11 +52,11 @@ export default function Satellite({ proficiencyLevel, orbitRadius, orbitSpeed, i
       
       {/* Outer glow */}
       <mesh scale={1.5}>
-        <sphereGeometry args={[config.size, 8, 8]} />
+        <sphereGeometry args={[SATELLITE_CONFIG.SIZE, 8, 8]} />
         <meshBasicMaterial 
-          color={config.emissive}
+          color={color}
           transparent
-          opacity={0.3}
+          opacity={SATELLITE_CONFIG.OPACITY_GLOW}
         />
       </mesh>
     </group>

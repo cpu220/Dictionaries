@@ -14,15 +14,17 @@ interface SceneProps {
 
 export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps) {
   const starsRef = useRef<THREE.Points>(null);
-  const orbitAngleRef = useRef(0); // 用于跟踪轨道旋转角度
+  const solarSystemRef = useRef<THREE.Group>(null);
 
   useFrame((state, delta) => {
     if (starsRef.current) {
       starsRef.current.rotation.y += delta * SCENE_CONFIG.STARS_ROTATION_SPEED;
     }
     
-    // 更新轨道旋转角度
-    orbitAngleRef.current += delta * PLANET_CONFIG.ORBIT_ROTATION_SPEED;
+    // Rotate the entire solar system
+    if (solarSystemRef.current) {
+      solarSystemRef.current.rotation.y += delta * PLANET_CONFIG.ORBIT_ROTATION_SPEED;
+    }
   });
 
   // Create starfield background
@@ -57,29 +59,35 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
       {/* Starfield */}
       <points ref={starsRef} geometry={starsGeometry} material={starsMaterial} />
 
+      {/* Central Sun / Core */}
+      <mesh position={[0, 0, 0]}>
+        <sphereGeometry args={[0.2, 32, 32]} />
+        <meshBasicMaterial color="#ffaa00" transparent opacity={0.8} />
+      </mesh>
+      <pointLight position={[0, 0, 0]} intensity={2} distance={20} color="#ffaa00" />
+
       {/* Planets - 围绕中心点旋转 */}
-      {decks.map((deck, index) => {
-        // 基础角度加上轨道旋转角度，实现所有星球围绕中心点旋转
-        const baseAngle = index * angleStep;
-        const totalAngle = baseAngle + orbitAngleRef.current;
-        
-        // 计算旋转后的位置
-        const x = Math.cos(totalAngle) * radius;
-        const z = Math.sin(totalAngle) * radius;
-        
-        return (
-          <Planet
-            key={deck.id}
-            position={[x, 0, z]}
-            deckName={deck.name}
-            deckId={deck.id}
-            stats={decksProgress[deck.id] || { totalWords: 0, lowProficiency: [], mediumProficiency: [], highProficiency: [] }}
-            color={deck.color}
-            textureUrl={deck.textureUrl}
-            onClick={() => onDeckClick(deck.id)}
-          />
-        );
-      })}
+      {/* Solar System Container - Rotates around center */}
+      <group ref={solarSystemRef}>
+        {decks.map((deck, index) => {
+          const angle = index * angleStep;
+          const x = Math.cos(angle) * radius;
+          const z = Math.sin(angle) * radius;
+          
+          return (
+            <Planet
+              key={deck.id}
+              position={[x, 0, z]}
+              deckName={deck.name}
+              deckId={deck.id}
+              stats={decksProgress[deck.id] || { totalWords: 0, again: [], hard: [], good: [], easy: [] }}
+              color={deck.color}
+              textureUrl={deck.textureUrl}
+              onClick={() => onDeckClick(deck.id)}
+            />
+          );
+        })}
+      </group>
     </>
   );
 }

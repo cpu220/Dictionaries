@@ -101,7 +101,7 @@ export function clearDeckProgress(deckId: string): void {
  */
 export function clearAllProgress(): void {
   updateStorage<AllProgress>(STORAGE_KEY, () => ({}), {});
-  updateStorage<StudySessionsMap>(SESSIONS_MAP_KEY, () => ({ sessions: [] }), {});
+  updateStorage<StudySessionsMap>(SESSIONS_MAP_KEY, () => ({ sessions: [] }), { sessions: [] });
   
   // 清除所有会话数据
   const sessionsMap = getStorage<StudySessionsMap>(SESSIONS_MAP_KEY, { sessions: [] });
@@ -145,19 +145,19 @@ export function loadSession(sessionId: string): StudySession | null {
   if (!session) return null;
 
   // 迁移旧数据：如果存在 wordList 但不存在 words
-  if (session.wordList && !session.words) {
-    console.log(`Migrating session ${sessionId} from legacy format...`);
-    const migratedSession: StudySession = {
-      ...session,
-      words: session.wordList.map((id: string) => ({ id })),
-    };
-    // 删除旧属性
-    delete (migratedSession as any).wordList;
+  // if (session.wordList && !session.words) {
+  //   console.log(`Migrating session ${sessionId} from legacy format...`);
+  //   const migratedSession: StudySession = {
+  //     ...session,
+  //     words: session.wordList.map((id: string) => ({ id })),
+  //   };
+  //   // 删除旧属性
+  //   delete (migratedSession as any).wordList;
     
-    // 保存迁移后的数据
-    saveSession(migratedSession);
-    return migratedSession;
-  }
+  //   // 保存迁移后的数据
+  //   saveSession(migratedSession);
+  //   return migratedSession;
+  // }
 
   return session as StudySession;
 }
