@@ -1,16 +1,17 @@
 import React, { useRef } from 'react';
 import { useFrame } from '@react-three/fiber';
 import * as THREE from 'three';
-import { SATELLITE_CONFIG } from '@/consts/home3d';
+import { SatelliteConfig } from '@/consts/home3d';
 
 interface SatelliteProps {
   color: string;
   orbitRadius: number;
   orbitSpeed: number;
   initialAngle: number;
+  config: SatelliteConfig;
 }
 
-export default function Satellite({ color, orbitRadius, orbitSpeed, initialAngle }: SatelliteProps) {
+export default function Satellite({ color, orbitRadius, orbitSpeed, initialAngle, config }: SatelliteProps) {
   const meshRef = useRef<THREE.Group>(null);
   const angleRef = useRef(initialAngle);
 
@@ -21,13 +22,13 @@ export default function Satellite({ color, orbitRadius, orbitSpeed, initialAngle
       
       const x = Math.cos(angleRef.current) * orbitRadius;
       const z = Math.sin(angleRef.current) * orbitRadius;
-      const y = Math.sin(angleRef.current * 2) * SATELLITE_CONFIG.VERTICAL_WAVE_AMPLITUDE; // Add vertical wave motion
+      const y = Math.sin(angleRef.current * 2) * config.VERTICAL_WAVE_AMPLITUDE; // Add vertical wave motion
       
       meshRef.current.position.set(x, y, z);
       
       // Rotate the satellite itself
-      meshRef.current.rotation.x += delta * SATELLITE_CONFIG.SELF_ROTATION_SPEED;
-      meshRef.current.rotation.y += delta * SATELLITE_CONFIG.SELF_ROTATION_SPEED;
+      meshRef.current.rotation.x += delta * config.SELF_ROTATION_SPEED;
+      meshRef.current.rotation.y += delta * config.SELF_ROTATION_SPEED;
     }
   });
 
@@ -35,13 +36,13 @@ export default function Satellite({ color, orbitRadius, orbitSpeed, initialAngle
     <group ref={meshRef}>
       {/* Main transparent sphere */}
       <mesh>
-        <sphereGeometry args={[SATELLITE_CONFIG.SIZE, 16, 16]} />
+        <sphereGeometry args={[config.SIZE, 16, 16]} />
         <meshPhysicalMaterial 
           color={color}
           emissive={color}
           emissiveIntensity={0.8}
           transparent
-          opacity={SATELLITE_CONFIG.OPACITY_MAIN}
+          opacity={config.OPACITY_MAIN}
           metalness={0.2}
           roughness={0.1}
           transmission={0.5}
@@ -52,11 +53,11 @@ export default function Satellite({ color, orbitRadius, orbitSpeed, initialAngle
       
       {/* Outer glow */}
       <mesh scale={1.5}>
-        <sphereGeometry args={[SATELLITE_CONFIG.SIZE, 8, 8]} />
+        <sphereGeometry args={[config.SIZE, 8, 8]} />
         <meshBasicMaterial 
           color={color}
           transparent
-          opacity={SATELLITE_CONFIG.OPACITY_GLOW}
+          opacity={config.OPACITY_GLOW}
         />
       </mesh>
     </group>

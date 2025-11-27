@@ -4,7 +4,7 @@ import * as THREE from 'three';
 import Planet from './Planet';
 import { DeckStats } from '../utils/deckProgress';
 import { DeckConfig } from '@/consts/decks';
-import { PLANET_CONFIG, SCENE_CONFIG } from '@/consts/home3d';
+import { PLANET_CONFIG, SATELLITE_CONFIG, SCENE_CONFIG } from '@/consts/home3d';
 
 interface SceneProps {
   decks: DeckConfig[];
@@ -46,8 +46,7 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
   starsGeometry.setAttribute('position', new THREE.Float32BufferAttribute(starsVertices, 3));
 
   // Position planets in a circular layout
-  const radius = PLANET_CONFIG.ORBIT_RADIUS;
-  const angleStep = (Math.PI * 2) / decks.length;
+  // Position planets in a circular layout
 
   return (
     <>
@@ -70,7 +69,16 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
       {/* Solar System Container - Rotates around center */}
       <group ref={solarSystemRef}>
         {decks.map((deck, index) => {
-          const angle = index * angleStep;
+          // Merge configurations
+          const planetConfig = { ...PLANET_CONFIG, ...deck.planetConfig };
+          const satelliteConfig = { ...SATELLITE_CONFIG, ...deck.satelliteConfig };
+
+          // 获取该星球的轨道半径
+          const radius = planetConfig.ORBIT_RADIUS;
+            
+          // 随机分布起始角度，避免所有星球排成一条线
+          const angle = (index / decks.length) * Math.PI * 2; 
+          
           const x = Math.cos(angle) * radius;
           const z = Math.sin(angle) * radius;
           
@@ -83,6 +91,8 @@ export default function Scene({ decks, decksProgress, onDeckClick }: SceneProps)
               stats={decksProgress[deck.id] || { totalWords: 0, again: [], hard: [], good: [], easy: [] }}
               color={deck.color}
               textureUrl={deck.textureUrl}
+              planetConfig={planetConfig}
+              satelliteConfig={satelliteConfig}
               onClick={() => onDeckClick(deck.id)}
             />
           );

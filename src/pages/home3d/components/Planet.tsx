@@ -4,7 +4,7 @@ import { Html } from '@react-three/drei';
 import * as THREE from 'three';
 import Satellite from './Satellite';
 import { DeckStats } from '../utils/deckProgress';
-import { PLANET_CONFIG, SATELLITE_CONFIG } from '@/consts/home3d';
+import { PlanetConfig, SatelliteConfig } from '@/consts/home3d';
 import { DIFFICULTY_LEVELS } from '@/consts/difficulty';
 
 interface PlanetProps {
@@ -14,10 +14,12 @@ interface PlanetProps {
   stats: DeckStats;
   color: string;
   textureUrl?: string;
+  planetConfig: PlanetConfig;
+  satelliteConfig: SatelliteConfig;
   onClick: () => void;
 }
 
-export default function Planet({ position, deckName, deckId, stats, color, textureUrl, onClick }: PlanetProps) {
+export default function Planet({ position, deckName, deckId, stats, color, textureUrl, planetConfig, satelliteConfig, onClick }: PlanetProps) {
   const meshRef = useRef<THREE.Mesh>(null);
   const [hovered, setHovered] = useState(false);
   
@@ -26,7 +28,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
   useFrame((state, delta) => {
     if (meshRef.current) {
-      meshRef.current.rotation.y += delta * PLANET_CONFIG.ROTATION_SPEED * 2; // 稍微增加旋转速度，使自转更明显
+      meshRef.current.rotation.y += delta * planetConfig.ROTATION_SPEED * 2; // 稍微增加旋转速度，使自转更明显
     }
   });
 
@@ -45,25 +47,32 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
     baseRadius: number
   ) => {
     for (let i = 0; i < count; i++) {
-      const orbitRadius = baseRadius + Math.random() * PLANET_CONFIG.SATELLITE_RADIUS_VARIATION;
-      const orbitSpeed = SATELLITE_CONFIG.ORBIT_SPEED_MIN + Math.random() * SATELLITE_CONFIG.ORBIT_SPEED_RANGE;
+      const orbitRadius = baseRadius + Math.random() * planetConfig.SATELLITE_RADIUS_VARIATION;
+      const orbitSpeed = satelliteConfig.ORBIT_SPEED_MIN + Math.random() * satelliteConfig.ORBIT_SPEED_RANGE;
       const initialAngle = Math.random() * Math.PI * 2;
       
+      // Random orbital inclination (tilt)
+      // Rotate mainly around X and Z axes to tilt the orbital plane
+      const tiltX = (Math.random() - 0.5) * Math.PI; // +/- 90 degrees tilt
+      const tiltZ = (Math.random() - 0.5) * Math.PI; // +/- 90 degrees tilt
+      
       satellites.push(
-        <Satellite
-          key={`${color}-${i}`}
-          color={color}
-          orbitRadius={orbitRadius}
-          orbitSpeed={orbitSpeed}
-          initialAngle={initialAngle}
-        />
+        <group key={`${color}-${i}`} rotation={[tiltX, 0, tiltZ]}>
+          <Satellite
+            color={color}
+            orbitRadius={orbitRadius}
+            orbitSpeed={orbitSpeed}
+            initialAngle={initialAngle}
+            config={satelliteConfig}
+          />
+        </group>
       );
     }
   };
 
   // Limit total satellites
   const totalWords = stats.totalWords;
-  const maxSatellites = PLANET_CONFIG.MAX_SATELLITES;
+  const maxSatellites = planetConfig.MAX_SATELLITES;
   const scaleFactor = totalWords > maxSatellites ? maxSatellites / totalWords : 1;
   
   const againCount = Math.floor(stats.again.length * scaleFactor);
@@ -71,16 +80,16 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
   const goodCount = Math.floor(stats.good.length * scaleFactor);
   const easyCount = Math.floor(stats.easy.length * scaleFactor);
 
-  let currentRadius = PLANET_CONFIG.SATELLITE_BASE_RADIUS;
+  let currentRadius = planetConfig.SATELLITE_BASE_RADIUS;
   
   addSatellites(againCount, DIFFICULTY_LEVELS.AGAIN.color, currentRadius);
-  currentRadius += PLANET_CONFIG.SATELLITE_RADIUS_INCREMENT;
+  currentRadius += planetConfig.SATELLITE_RADIUS_INCREMENT;
   
   addSatellites(hardCount, DIFFICULTY_LEVELS.HARD.color, currentRadius);
-  currentRadius += PLANET_CONFIG.SATELLITE_RADIUS_INCREMENT;
+  currentRadius += planetConfig.SATELLITE_RADIUS_INCREMENT;
   
   addSatellites(goodCount, DIFFICULTY_LEVELS.GOOD.color, currentRadius);
-  currentRadius += PLANET_CONFIG.SATELLITE_RADIUS_INCREMENT;
+  currentRadius += planetConfig.SATELLITE_RADIUS_INCREMENT;
   
   addSatellites(easyCount, DIFFICULTY_LEVELS.EASY.color, currentRadius);
 
@@ -93,7 +102,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
         onPointerOver={() => setHovered(true)}
         onPointerOut={() => setHovered(false)}
       >
-        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 64, 64]} />
+        <sphereGeometry args={[planetConfig.BASE_RADIUS, 64, 64]} />
         {texture ? (
           // Custom texture
           <meshPhysicalMaterial
@@ -128,7 +137,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
       {/* Wireframe overlay for Earth-like grid - only for non-texture planets */}
       {!texture && (
         <mesh scale={1.01}>
-          <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
+          <sphereGeometry args={[planetConfig.BASE_RADIUS, 32, 32]} />
           <meshBasicMaterial
             color={color}
             wireframe
@@ -140,7 +149,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Inner glow */}
       <mesh scale={0.95}>
-        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
+        <sphereGeometry args={[planetConfig.BASE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -150,7 +159,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Atmosphere glow - outer layer */}
       <mesh scale={1.15}>
-        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
+        <sphereGeometry args={[planetConfig.BASE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent
@@ -161,7 +170,7 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Atmosphere glow - middle layer */}
       <mesh scale={1.08}>
-        <sphereGeometry args={[PLANET_CONFIG.BASE_RADIUS, 32, 32]} />
+        <sphereGeometry args={[planetConfig.BASE_RADIUS, 32, 32]} />
         <meshBasicMaterial
           color={color}
           transparent

@@ -5,7 +5,18 @@
 /**
  * 星球相关配置
  */
-export const PLANET_CONFIG = {
+export interface PlanetConfig {
+  BASE_RADIUS: number;
+  ROTATION_SPEED: number;
+  ORBIT_RADIUS: number;
+  ORBIT_ROTATION_SPEED: number;
+  MAX_SATELLITES: number;
+  SATELLITE_BASE_RADIUS: number;
+  SATELLITE_RADIUS_INCREMENT: number;
+  SATELLITE_RADIUS_VARIATION: number;
+}
+
+export const PLANET_CONFIG: PlanetConfig = {
   // 星球基础大小
   BASE_RADIUS: 0.3, // 减小默认大小，使星球在初始视角中可见
   
@@ -13,7 +24,7 @@ export const PLANET_CONFIG = {
   ROTATION_SPEED: 0.1, // 降低旋转速度，使视觉效果更舒适
   
   // 轨道半径（星球围绕中心点的距离）
-  ORBIT_RADIUS: 2.5, // 减小轨道半径，使星球在视图范围内
+  ORBIT_RADIUS: 2, // 默认轨道半径
   
   // 轨道旋转速度（星球围绕中心点旋转的速度）
   ORBIT_ROTATION_SPEED: 0.15, // 增加轨道旋转速度，使旋转效果更明显
@@ -28,7 +39,17 @@ export const PLANET_CONFIG = {
 /**
  * 卫星相关配置
  */
-export const SATELLITE_CONFIG = {
+export interface SatelliteConfig {
+  SIZE: number;
+  OPACITY_MAIN: number;
+  OPACITY_GLOW: number;
+  ORBIT_SPEED_MIN: number;
+  ORBIT_SPEED_RANGE: number;
+  SELF_ROTATION_SPEED: number;
+  VERTICAL_WAVE_AMPLITUDE: number;
+}
+
+export const SATELLITE_CONFIG: SatelliteConfig = {
   // 卫星外观
   SIZE: 0.04, // 卫星大小
   OPACITY_MAIN: 0.7, // 主体透明度
