@@ -12,9 +12,9 @@ export interface DeckConfig {
 
 export const DECKS: DeckConfig[] = [
   {
-    id: 'cet4',
-    name: 'CET-4 Vocabulary (Mock)',
-    count: 3,
+    id: 'englishCommonPhrases',
+    name: '常用短语',
+    count: 4000,
     color: '#e74c3c',
     textureUrl: '', // Empty = use glass effect
     planetConfig: {
@@ -27,7 +27,7 @@ export const DECKS: DeckConfig[] = [
     }
   },
   {
-    id: 'cet4_imported',
+    id: 'cet4',
     name: 'CET-4 Vocabulary (Full)',
     count: 4028,
     color: '#3498db',

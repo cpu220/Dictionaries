@@ -8,9 +8,10 @@ interface FlashcardProps {
     word: Word;
     isFlipped: boolean;
     onFlip: () => void;
+    deckId?: string;
 }
 
-export default function Flashcard({ word, isFlipped, onFlip }: FlashcardProps) {
+export default function Flashcard({ word, isFlipped, onFlip, deckId = 'cet4' }: FlashcardProps) {
     return (
         <div className="flashcard-container" onClick={onFlip}>
             <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`}>
@@ -21,7 +22,7 @@ export default function Flashcard({ word, isFlipped, onFlip }: FlashcardProps) {
 
                 {/* Back */}
                 <div className="flashcard-face flashcard-back">
-                    <Back word={word} />
+                    <Back word={word} deckId={deckId} />
                 </div>
             </div>
         </div>

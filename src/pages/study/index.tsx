@@ -21,7 +21,10 @@ export default function StudyPage() {
 
     useEffect(() => {
         async function loadData() {
+            console.log('Loading words for deck:', deckId);
             const data = await getWords(deckId);
+            console.log('Words count loaded:', data.length);
+            console.log('First few words sample:', data.slice(0, 2));
             let sessionWords = data;
             let initialIndex = 0;
             let currentSession: StudySession | null = null;
@@ -207,6 +210,7 @@ export default function StudyPage() {
                     word={currentWord}
                     isFlipped={isFlipped}
                     onFlip={handleFlip}
+                    deckId={deckId}
                 />
             </div>
 

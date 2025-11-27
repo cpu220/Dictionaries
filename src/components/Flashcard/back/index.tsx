@@ -8,9 +8,10 @@ import './index.less';
 
 interface BackProps {
     word: Word;
+    deckId?: string; // 添加deckId属性，用于动态构建音频路径
 }
 
-export default function Back({ word }: BackProps) {
+export default function Back({ word, deckId = 'cet4' }: BackProps) {
     const [activeGroupIndex, setActiveGroupIndex] = useState<number | null>(null);
     const [playbackRate, setPlaybackRate] = useState<number>(1);
 
@@ -55,12 +56,15 @@ export default function Back({ word }: BackProps) {
 
     const playFullAudio = () => {
         if (word.audio_url) {
-            // Prepend ROOT_PATH if the URL is absolute and doesn't already contain it
-            // Also remove trailing slash from ROOT_PATH if present to avoid double slashes, though ROOT_PATH here is /Dictionaries
-            const audioPath = word.audio_url.startsWith('/') ? `${ROOT_PATH}${word.audio_url}` : word.audio_url;
-            console.log('Playing audio from:', audioPath);
-            // 使用音频缓存工具播放音频
-            audioCache.playAudio(audioPath, playbackRate).catch(e => console.error('Audio play failed', e));
+            // 提取音频文件名，去掉前面的路径部分
+            const audioFileName = word.audio_url.split('/').pop();
+            if (audioFileName) {
+                // 根据ROOT_PATH和deckId动态构建音频路径，指向public目录下的对应位置
+                const audioPath = `${ROOT_PATH}/${deckId}/audio/${audioFileName}`;
+                console.log('Playing audio from:', audioPath);
+                // 使用音频缓存工具播放音频
+                audioCache.playAudio(audioPath, playbackRate).catch(e => console.error('Audio play failed', e));
+            }
         }
     };
 
