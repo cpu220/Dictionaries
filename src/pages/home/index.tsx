@@ -26,6 +26,20 @@ export default function HomePage() {
             </List.Item>
           ))}
           <List.Item
+            onClick={() => history.push('/decks')}
+            clickable
+            prefix={<span style={{ fontSize: '0.2rem' }}>📚</span>}
+          >
+            My Decks (Anki)
+          </List.Item>
+          <List.Item
+            onClick={() => history.push('/import')}
+            clickable
+            prefix={<span style={{ fontSize: '0.2rem' }}>📥</span>}
+          >
+            Import Anki Deck
+          </List.Item>
+          <List.Item
             onClick={() => history.push('/home3d')}
             clickable
             prefix={<span style={{ fontSize: '0.2rem' }}>🌍</span>}

@@ -8,15 +8,19 @@
     "setup": "umi setup",
     "start": "npm run dev",
     "zip": "node scripts/build-zip.js",
-    "b":"yarn build && yarn zip"
+    "b": "yarn build && yarn zip"
   },
   "dependencies": {
     "@react-three/drei": "^9.105.6",
     "@react-three/fiber": "^8.15.19",
+    "@types/sql.js": "^1.4.9",
     "antd-mobile": "^5.41.1",
     "antd-mobile-icons": "^0.3.0",
+    "idb": "^8.0.3",
+    "jszip": "^3.10.1",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
+    "sql.js": "^1.13.0",
     "three": "^0.181.2",
     "umi": "^4.6.0"
   },

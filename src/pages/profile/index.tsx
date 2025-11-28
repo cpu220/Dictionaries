@@ -1,176 +1,102 @@
 import React, { useState, useEffect } from 'react';
-import { NavBar, Card, List, Empty, Tag, ProgressBar } from 'antd-mobile';
+import { NavBar, Card, List, Empty, Tag, ProgressBar, Switch, Radio, Space } from 'antd-mobile';
 import { history } from 'umi';
-import { getWords } from '@/utils/data';
-import { getSessionsMap, loadSession } from '@/utils/storage/progress';
-import { Word, StudySession } from '@/interfaces';
+import { DeckService } from '@/services/database/indexeddb/DeckService';
+import { CardService } from '@/services/database/indexeddb/CardService';
+import { Deck } from '@/services/database/types';
 
 export default function ProfilePage() {
-    const [allWords, setAllWords] = useState<Word[]>([]);
-    const [sessions, setSessions] = useState<StudySession[]>([]);
+    const [decks, setDecks] = useState<Deck[]>([]);
+    const [totalCards, setTotalCards] = useState(0);
+    const [learnedCards, setLearnedCards] = useState(0);
+    const [newCardOrder, setNewCardOrder] = useState<'random' | 'sequential'>('random');
     const [loading, setLoading] = useState(true);
-    const [expandedSessionId, setExpandedSessionId] = useState<string | null>(null);
+
+    const deckService = new DeckService();
+    const cardService = new CardService();
 
     useEffect(() => {
-        async function loadData() {
-            // 加载所有单词数据，用于显示单词详情
-            const words = await getWords('cet4');
-            setAllWords(words);
-            
-            // 加载会话映射
-            const map = getSessionsMap();
-            
-            // 加载所有会话数据
-            const loadedSessions: StudySession[] = [];
-            if (map && map.sessions) {
-                // 倒序加载，最新的在前面
-                for (let i = map.sessions.length - 1; i >= 0; i--) {
-                    const sessionId = map.sessions[i];
-                    const session = loadSession(sessionId);
-                    if (session) {
-                        loadedSessions.push(session);
-                    }
-                }
-            }
-            setSessions(loadedSessions);
-            setLoading(false);
-        }
         loadData();
+        loadSettings();
     }, []);
 
-    // 获取会话中的单词详情
-    const getSessionWords = (session: StudySession): Word[] => {
-        return session.words.map(item => allWords.find(w => w.id === item.id)).filter(Boolean) as Word[];
+    const loadData = async () => {
+        const allDecks = await deckService.getAllDecks();
+        setDecks(allDecks);
+        
+        let total = 0;
+        let learned = 0;
+        allDecks.forEach(d => {
+            total += d.total_cards;
+            learned += d.learned_cards;
+        });
+        setTotalCards(total);
+        setLearnedCards(learned);
+        setLoading(false);
     };
 
-    // 点击单词跳转到study页面
-    const handleWordClick = (e: React.MouseEvent, session: StudySession, wordId: string) => {
-        e.stopPropagation(); // 防止触发卡片点击
-        // 跳转到study页面，并传递卡包ID、会话ID和单词ID
-        // 注意：这里我们需要传递 sessionId 让 study 页面加载这个特定的会话
-        // 同时也传递 wordId 以便直接定位到这个单词（如果 study 页面支持的话）
-        history.push(`/study?deck=${session.deckId}&sessionId=${session.id}&initialWordId=${wordId}`);
-    };
-
-    // 点击卡片，展示或隐藏单词列表
-    const handleCardClick = (sessionId: string) => {
-        if (expandedSessionId === sessionId) {
-            setExpandedSessionId(null);
+    const loadSettings = () => {
+        const storedOrder = localStorage.getItem('newCardOrder');
+        if (storedOrder === 'sequential') {
+            setNewCardOrder('sequential');
         } else {
-            setExpandedSessionId(sessionId);
+            setNewCardOrder('random');
         }
     };
 
-    // 格式化日期
-    const formatDate = (timestamp: number) => {
-        const date = new Date(timestamp);
-        return `${date.getMonth() + 1}月${date.getDate()}日 ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+    const handleOrderChange = (value: 'random' | 'sequential') => {
+        setNewCardOrder(value);
+        localStorage.setItem('newCardOrder', value);
     };
 
     return (
         <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
-            <NavBar onBack={() => history.back()}>学习记录</NavBar>
+            <NavBar onBack={() => history.push('/')}>Profile & Settings</NavBar>
 
             <div style={{ padding: '0.2rem' }}>
-                <h3 style={{ marginBottom: '0.2rem' }}>我的学习会话</h3>
-                
-                {loading ? (
-                    <div style={{ textAlign: 'center', marginTop: '0.5rem', color: '#888' }}>
-                        <p>加载中...</p>
+                <Card title="Statistics" style={{ marginBottom: '0.2rem' }}>
+                    <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
+                        <div>
+                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1677ff' }}>{totalCards}</div>
+                            <div style={{ color: '#666' }}>Total Cards</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>{learnedCards}</div>
+                            <div style={{ color: '#666' }}>Learned</div>
+                        </div>
+                        <div>
+                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>{decks.length}</div>
+                            <div style={{ color: '#666' }}>Decks</div>
+                        </div>
                     </div>
-                ) : sessions.length === 0 ? (
-                    <Empty description="暂无学习记录" />
-                ) : (
-                    <div style={{ 
-                        display: 'flex', 
-                        flexWrap: 'wrap', 
-                        justifyContent: 'space-between',
-                        alignItems: 'flex-start' // 确保卡片顶部对齐
-                    }}>
-                        {sessions.map(session => {
-                            const sessionWords = getSessionWords(session);
-                            const progress = Math.round(((session.currentIndex + 1) / session.words.length) * 100);
-                            const isExpanded = expandedSessionId === session.id;
-                            
-                            return (
-                                <div 
-                                    key={session.id} 
-                                    style={{ 
-                                        width: isExpanded ? '100%' : '48%', // 展开时占满一行
-                                        marginBottom: '0.2rem',
-                                        transition: 'width 0.3s ease'
-                                    }}
-                                >
-                                    <Card 
-                                        style={{ 
-                                            height: '100%',
-                                            cursor: 'pointer',
-                                            border: isExpanded ? '1px solid #1677ff' : 'none'
-                                        }}
-                                        onClick={() => handleCardClick(session.id)}
-                                    >
-                                        <div style={{ marginBottom: '0.1rem', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                            <span style={{ fontWeight: 'bold' }}>{formatDate(session.createdAt)}</span>
-                                            {session.completed ? (
-                                                <Tag color="success">已完成</Tag>
-                                            ) : (
-                                                <Tag color="processing">进行中</Tag>
-                                            )}
-                                        </div>
-                                        
-                                        <div style={{ marginBottom: '0.1rem', fontSize: '0.28rem', color: '#666' }}>
-                                            共 {session.words.length} 个单词
-                                        </div>
-                                        
-                                        <div style={{ marginBottom: '0.1rem' }}>
-                                            <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '0.24rem', marginBottom: '0.05rem', color: '#888' }}>
-                                                <span>进度</span>
-                                                <span>{progress}%</span>
-                                            </div>
-                                            <ProgressBar percent={progress} />
-                                        </div>
+                </Card>
 
-                                        {isExpanded && (
-                                            <div style={{ marginTop: '0.2rem', borderTop: '1px solid #eee', paddingTop: '0.2rem' }}>
-                                                <List header="单词列表">
-                                                    {sessionWords.map((word, index) => {
-                                                        const isLearned = index <= session.currentIndex;
-                                                        const sessionWord = session.words.find(w => w.id === word.id);
-                                                        const result = sessionWord?.result;
-                                                        
-                                                        let resultTag = null;
-                                                        if (result) {
-                                                            if (result <= 1) resultTag = <Tag color="danger">Again</Tag>;
-                                                            else if (result <= 5) resultTag = <Tag color="warning">Hard</Tag>;
-                                                            else if (result <= 8) resultTag = <Tag color="primary">Good</Tag>;
-                                                            else resultTag = <Tag color="success">Easy</Tag>;
-                                                        } else if (isLearned) {
-                                                            resultTag = <Tag color="default">已学</Tag>;
-                                                        } else {
-                                                            resultTag = <Tag color="default" style={{ opacity: 0.5 }}>未学</Tag>;
-                                                        }
+                <Card title="Settings" style={{ marginBottom: '0.2rem' }}>
+                    <List header="Study Options">
+                        <List.Item>
+                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                                <span>New Card Order</span>
+                                <Radio.Group value={newCardOrder} onChange={val => handleOrderChange(val as any)}>
+                                    <Space direction='horizontal'>
+                                        <Radio value='random'>Random</Radio>
+                                        <Radio value='sequential'>Sequential</Radio>
+                                    </Space>
+                                </Radio.Group>
+                            </div>
+                        </List.Item>
+                    </List>
+                </Card>
 
-                                                        return (
-                                                            <List.Item
-                                                                key={word.id}
-                                                                onClick={(e) => handleWordClick(e, session, word.id)}
-                                                                clickable
-                                                                extra={resultTag}
-                                                            >
-                                                                <span style={{ fontWeight: 'bold' }}>{word.word}</span>
-                                                                <div style={{ fontSize: '0.24rem', color: '#888', marginTop: '0.05rem' }}>{word.translation}</div>
-                                                            </List.Item>
-                                                        );
-                                                    })}
-                                                </List>
-                                            </div>
-                                        )}
-                                    </Card>
-                                </div>
-                            );
-                        })}
-                    </div>
-                )}
+                <h3 style={{ marginBottom: '0.2rem' }}>My Decks</h3>
+                {decks.map(deck => (
+                    <Card key={deck.id} style={{ marginBottom: '0.2rem' }}>
+                        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                            <span style={{ fontWeight: 'bold' }}>{deck.name}</span>
+                            <Tag color="primary">{deck.learned_cards} / {deck.total_cards}</Tag>
+                        </div>
+                        <ProgressBar percent={deck.total_cards > 0 ? (deck.learned_cards / deck.total_cards) * 100 : 0} style={{ marginTop: '10px' }} />
+                    </Card>
+                ))}
             </div>
         </div>
     );

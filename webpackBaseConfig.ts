@@ -14,6 +14,8 @@ export default {
     { path: "/home3d", component: "home3d/index" },
     { path: "/profile", component: "profile/index" },
     { path: "/study", component: "study/index" },
+    { path: "/import", component: "import/index" },
+    { path: "/decks", component: "decks/index" },
   ],
   
   // npm客户端配置
