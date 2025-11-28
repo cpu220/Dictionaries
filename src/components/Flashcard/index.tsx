@@ -12,6 +12,8 @@ interface FlashcardProps {
 }
 
 export default function Flashcard({ word, isFlipped, onFlip, deckId = 'cet4' }: FlashcardProps) {
+    // debugger
+    console.log('Flashcard props:', { word, isFlipped, onFlip, deckId });
     return (
         <div className="flashcard-container" onClick={onFlip}>
             <div className={`flashcard-inner ${isFlipped ? 'flipped' : ''}`}>

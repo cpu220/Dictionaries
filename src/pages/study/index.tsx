@@ -6,7 +6,7 @@ import { getWords } from '@/utils/data';
 import { Word, UserProgress, StudySession } from '@/interfaces';
 import { calculateNextReview, getInitialProgress } from '@/utils/scheduler';
 import { saveProgress, getProgress, saveSession, loadCurrentSession, loadSession, clearSession, createSession } from '@/utils/storage/progress';
-import { SESSION_WORDS_COUNT } from '@/consts';
+import { SESSION_WORDS_COUNT } from '@/consts/decks';
 import { DIFFICULTY_LEVELS } from '@/consts/difficulty';
 
 export default function StudyPage() {
@@ -169,6 +169,11 @@ export default function StudyPage() {
             };
             
             saveSession(completedSession);
+            
+            // 清除当前卡组的缓存，确保下次进入study页面时能获取到新的随机单词
+            import('@/utils/data').then(({ clearDeckCache }) => {
+                clearDeckCache(deckId);
+            });
             
             Toast.show({
                 content: 'Session Complete!',

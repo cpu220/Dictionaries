@@ -1,5 +1,25 @@
 import { PlanetConfig, SatelliteConfig } from './home3d';
 
+// 随机加载配置常量
+/**
+ * 随机选择的字母文件数量
+ * 当需要随机加载单词时，会从所有可用字母中随机选择RANDOM_LETTER_FILES_COUNT个字母文件
+ */
+export const RANDOM_LETTER_FILES_COUNT = 5;
+
+/**
+ * 从每个选中的字母文件中随机选择的单词数量
+ * 对于每个随机选中的字母文件，会从中随机抽取WORDS_PER_LETTER_FILE个单词
+ */
+export const WORDS_PER_LETTER_FILE = 10;
+
+/**
+ * 学习会话的单词数量
+ * 控制每次新学习会话开始时随机选择的单词总数
+ * 这是最终呈现在用户面前的学习单词数量
+ */
+export const SESSION_WORDS_COUNT = 5;
+
 export interface DeckConfig {
   id: string;
   name: string;
@@ -18,12 +38,14 @@ export const DECKS: DeckConfig[] = [
     color: '#e74c3c',
     textureUrl: '', // Empty = use glass effect
     planetConfig: {
-      ORBIT_RADIUS: 1, // Custom orbit radius
-      BASE_RADIUS: 0.1, // Slightly larger
+      ORBIT_RADIUS: 2, // Custom orbit radius
+      BASE_RADIUS: 0.3, // Slightly larger
+      SATELLITE_BASE_RADIUS:0.1
       // ROTATION_SPEED: 4.01, // Slower rotation for Earth
     },
     satelliteConfig: {
       SIZE: 0.06, // Larger satellites
+      
     }
   },
   {

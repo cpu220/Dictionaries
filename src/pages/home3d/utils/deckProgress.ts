@@ -18,10 +18,6 @@ export async function getDeckProgress(deckId: string): Promise<DeckStats> {
   
   console.log(`getDeckProgress for deck: ${deckId}`);
   
-  // Load all words for this deck
-  const deckWords = await getWords(deckId);
-  console.log(`Loaded ${deckWords.length} words for deck ${deckId}`);
-  
   // Get learned word IDs and their results from sessions
   const sessionResults = new Map<string, number>();
   const sessionsMap = getSessionsMap();
@@ -64,11 +60,11 @@ export async function getDeckProgress(deckId: string): Promise<DeckStats> {
       return 0; // Not learned
   };
 
-  deckWords.forEach(word => {
-    const result = getWordResult(word.id);
+  // Convert sessionResults map to UserProgress array
+  sessionResults.forEach((result, wordId) => {
     if (result > 0) {
         deckProgress.push({
-            word_id: word.id,
+            word_id: wordId,
             next_review_time: Date.now(),
             interval: 0,
             ease_factor: result, // Storing result in ease_factor for temporary passing
