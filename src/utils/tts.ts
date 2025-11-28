@@ -3,6 +3,7 @@ export interface SpeakOptions {
   pitch?: number; // 0 to 2
   volume?: number; // 0 to 1
   lang?: string; // e.g., 'en-US'
+  type?: number; // 0=US, 1=UK (for YouDao API)
 }
 
 class TTSService {
@@ -27,7 +28,7 @@ class TTSService {
     // 1. Try YouDao API (US English by default, type=0)
     // Note: YouDao API returns an audio stream. We can play it directly.
     // We'll try US accent (type=0) first.
-    const type = 0; // 0=US, 1=UK
+    const type = options.type !== undefined ? options.type : 0; // 0=US, 1=UK
     const url = `http://dict.youdao.com/dictvoice?type=${type}&audio=${encodeURIComponent(text)}`;
 
     this.audio = new Audio(url);

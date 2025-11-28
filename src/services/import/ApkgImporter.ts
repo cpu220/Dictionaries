@@ -161,7 +161,6 @@ export class ApkgImporter {
           }
 
           // Extract Word and Phonetic
-          // Extract Word and Phonetic
           // Strategy:
           // 1. Identify the 'Word' field (or fallback to first field)
           // 2. Identify the 'Phonetic' field
@@ -291,7 +290,10 @@ export class ApkgImporter {
       result = result.replace(negRegex, !hasContent ? '$1' : '');
     }
 
-    // 3. Cleanup remaining {{...}} tags that weren't replaced (optional, but cleaner)
+    // 3. Remove [sound:...] tags from the final result
+    result = result.replace(/\[sound:.*?\]/g, '');
+
+    // 4. Cleanup remaining {{...}} tags that weren't replaced (optional, but cleaner)
     // result = result.replace(/\{\{.*?\}\}/g, ''); 
 
     return result;

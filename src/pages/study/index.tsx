@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card as AntCard, Toast, NavBar, Slider, Popover } from 'antd-mobile';
+import { Button, Card as AntCard, Toast, NavBar, Slider, Popover, List } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import { SoundOutline, SetOutline } from 'antd-mobile-icons';
 import { CardService } from '@/services/database/indexeddb/CardService';
@@ -37,14 +37,14 @@ const StudyPage: React.FC = () => {
   useEffect(() => {
     if (currentCard) {
       // Auto-play front when card loads
-      playCardAudio(currentCard, 'front');
+      playCardAudio(currentCard, 'front', 0);
     }
   }, [currentCard]);
 
   useEffect(() => {
     if (showAnswer && currentCard) {
       // Auto-play back when answer is shown
-      playCardAudio(currentCard, 'back');
+      playCardAudio(currentCard, 'back', 0);
     }
   }, [showAnswer]);
 
@@ -82,16 +82,14 @@ const StudyPage: React.FC = () => {
   const extractText = (html: string) => {
     const tmp = document.createElement('DIV');
     tmp.innerHTML = html;
-    // Remove [sound:...] tags if any
     let text = tmp.textContent || tmp.innerText || '';
-    text = text.replace(/\[sound:.*?\]/g, '');
     return text.trim();
   };
 
-  const playCardAudio = (card: Card, side: 'front' | 'back') => {
+  const playCardAudio = (card: Card, side: 'front' | 'back', type: number = 0) => {
     // 1. Try to use the parsed 'word' field if available (cleanest for API)
     if (card.word) {
-      tts.speak(card.word, { rate });
+      tts.speak(card.word, { rate, type });
       return;
     }
 
@@ -99,7 +97,7 @@ const StudyPage: React.FC = () => {
     const htmlContent = side === 'front' ? card.front : card.back;
     const text = extractText(htmlContent);
     if (text) {
-      tts.speak(text, { rate });
+      tts.speak(text, { rate, type });
     }
   };
 
@@ -123,42 +121,50 @@ const StudyPage: React.FC = () => {
   };
 
   const renderSettings = () => (
-    <div style={{ padding: '10px', width: '200px' }}>
-      <div style={{ marginBottom: '10px' }}>Speed: {rate}x</div>
-      <Slider 
-        min={0.5} 
-        max={2} 
-        step={0.1} 
-        value={rate} 
-        onChange={(val) => setRate(val as number)} 
-      />
-    </div>
+    <List>
+      <List.Item title="Speed">
+        <Slider 
+          min={0.5} 
+          max={2} 
+          step={0.1} 
+          value={rate} 
+          onChange={(val) => setRate(val as number)} 
+        />
+      </List.Item>
+    </List>
   );
 
-  if (loading) return <div className={styles.loading}>Loading...</div>;
-
-  if (finished) {
+  if (loading) {
     return (
-      <div className={styles.container}>
-        <NavBar onBack={() => history.push('/decks')}>Study</NavBar>
-        <div className={styles.finished}>
-          <h2>Congratulations!</h2>
-          <p>You have finished this deck for now.</p>
-          <Button color="primary" onClick={() => history.push('/decks')}>
-            Back to Decks
-          </Button>
-        </div>
+      <div className={styles.loading}>
+        <div className={styles.spinner}></div>
+        <p>Loading cards...</p>
       </div>
     );
   }
-  console.log(currentCard)
+
+  if (finished) {
+    return (
+      <div className={styles.finished}>
+        <div className={styles.icon}>🎉</div>
+        <h2>All Done!</h2>
+        <p>You have finished all cards for now.</p>
+        <Button color='primary' onClick={() => history.push('/decks')}>Back to Decks</Button>
+      </div>
+    );
+  }
+
+  // Helper to remove {{...}} tags for display
+  const cleanHtml = (html: string) => {
+    return html.replace(/\{\{.*?\}\}/g, '');
+  };
+
   return (
     <div className={styles.container}>
       <NavBar 
         onBack={() => history.push('/decks')}
         right={
           <div style={{ display: 'flex', gap: '10px' }}>
-            <SoundOutline fontSize={24} onClick={() => playCardAudio(currentCard!, showAnswer ? 'back' : 'front')} />
             <Popover content={renderSettings()} trigger='click' placement='bottom-end'>
               <SetOutline fontSize={24} />
             </Popover>
@@ -170,20 +176,23 @@ const StudyPage: React.FC = () => {
       
       <div className={styles.cardArea}>
         {currentCard && (
-          <AntCard className={styles.flashcard} onClick={() => playCardAudio(currentCard, showAnswer ? 'back' : 'front')}>
+          <AntCard className={styles.flashcard}>
+             <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, showAnswer ? 'back' : 'front', 0); }}>🇺🇸 US</Button>
+                <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, showAnswer ? 'back' : 'front', 1); }}>🇬🇧 UK</Button>
+             </div>
             <div 
               className={styles.cardContent}
-              dangerouslySetInnerHTML={{ __html: currentCard.front }} 
+              dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }} 
             />
-            
             {showAnswer && (
-              <>
+              <div className={styles.answerArea}>
                 <div className={styles.divider} />
                 <div 
                   className={styles.cardContent}
-                  dangerouslySetInnerHTML={{ __html: currentCard.back }} 
+                  dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.back) }} 
                 />
-              </>
+              </div>
             )}
           </AntCard>
         )}
