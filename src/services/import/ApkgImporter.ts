@@ -60,6 +60,7 @@ export class ApkgImporter {
     for (const did in ankiDecks) {
       const d = ankiDecks[did];
       if (d.dyn) continue; // Skip dynamic decks
+      if (did === '1' || d.name === 'Default') continue; // Skip Anki's default deck
 
       // Check if deck already exists
       const existingDeck = await this.deckService.getDeck(did);
