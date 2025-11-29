@@ -29,13 +29,13 @@ export default function Flashcard({
 
   return (
     <div 
-      className={`flashcard-container flashcard ${isFlipped ? 'flipped' : ''}`}
+      className={`flashcard ${isFlipped ? 'flipped' : ''}`}
       onClick={onFlip}
     >
       {/* Front Face */}
       <div className="card-face card-front">
-        <div className="card-header" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-          <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => handleAudioClick(e, 'front', 0)}>🇺🇸 US</Button>
+        <div className="card-header">
+          <Button size='mini' onClick={(e) => handleAudioClick(e, 'front', 0)}>🇺🇸 US</Button>
           <Button size='mini' onClick={(e) => handleAudioClick(e, 'front', 1)}>🇬🇧 UK</Button>
         </div>
         <div
@@ -46,8 +46,8 @@ export default function Flashcard({
 
       {/* Back Face */}
       <div className="card-face card-back">
-        <div className="card-header" style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-          <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => handleAudioClick(e, 'back', 0)}>🇺🇸 US</Button>
+        <div className="card-header">
+          <Button size='mini' onClick={(e) => handleAudioClick(e, 'back', 0)}>🇺🇸 US</Button>
           <Button size='mini' onClick={(e) => handleAudioClick(e, 'back', 1)}>🇬🇧 UK</Button>
         </div>
         <div

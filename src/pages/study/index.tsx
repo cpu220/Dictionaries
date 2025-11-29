@@ -4,7 +4,7 @@ import { history, useLocation } from 'umi';
 import SpeechSettingsPanel from '@/components/SpeechSettingsPanel';
 import Flashcard from '@/components/Flashcard';
 import StudyNavigation from '@/components/StudyNavigation';
-import { SoundOutline, SetOutline } from 'antd-mobile-icons';
+import { SoundOutline, SetOutline, LeftOutline } from 'antd-mobile-icons';
 import { CardService } from '@/services/database/indexeddb/CardService';
 import { StatsService } from '@/services/database/indexeddb/StatsService';
 import { Scheduler } from '@/services/scheduling/Scheduler';
@@ -271,22 +271,13 @@ const StudyPage: React.FC = () => {
   return (
     <div className={styles.container}>
       {/* Header with back to decks button */}
-      <div style={{
-        height: '44px',
-        backgroundColor: '#fff',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        paddingLeft: '16px',
-        paddingRight: '16px',
-        borderBottom: '1px solid rgba(0, 0, 0, 0.09)'
-      }}>
-        <Button size='mini' color='primary' fill='none' onClick={() => history.push('/decks')}>
-          Back to Decks
+      <div className={styles.header}>
+        <Button size='mini' color='primary' fill='none' onClick={() => history.back()}>
+          <LeftOutline />
         </Button>
-        <h1 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Study</h1>
-        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-          <div onClick={() => setShowSettings(!showSettings)} style={{ cursor: 'pointer' }}>
+        <h1 className={styles.headerTitle}>Study</h1>
+        <div className={styles.headerActions}>
+          <div onClick={() => setShowSettings(!showSettings)} className={styles.headerActionItem}>
             <SetOutline fontSize={24} />
           </div>
           {showSettings && <SpeechSettingsPanel rate={rate} onRateChange={setRate} />}
@@ -354,7 +345,7 @@ const StudyPage: React.FC = () => {
 
       {/* <div className={styles.controls}>
         {!showAnswer ? (
-          <div style={{ textAlign: 'center', color: '#999', padding: '10px' }}>
+          <div className={styles.tapHint}>
             点击卡片查看答案
           </div>
         ) : (

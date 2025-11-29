@@ -24,7 +24,7 @@ export const SESSION_WORDS_COUNT = 5;
  * 学习会话中的最大卡片数量
  * 控制每次学习会话中加载的卡片总数上限，确保用户在一次学习中不会面对过多卡片
  */
-export const MAX_CARDS_PER_SESSION = 2;
+export const MAX_CARDS_PER_SESSION = 10;
 
 export interface DeckConfig {
   id: string;

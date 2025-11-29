@@ -6,6 +6,7 @@ import { DeckService } from '@/services/database/indexeddb/DeckService';
 import { CardService } from '@/services/database/indexeddb/CardService';
 import { StatsService } from '@/services/database/indexeddb/StatsService';
 import { Deck, DailyStudyStat, Card } from '@/services/database/types';
+import styles from './index.less';
 
 export default function ProfilePage() {
     const [decks, setDecks] = useState<Deck[]>([]);
@@ -93,16 +94,16 @@ export default function ProfilePage() {
     };
 
     const renderCardList = (cards: Card[]) => (
-        <div style={{ maxHeight: '200px', overflowY: 'auto', background: '#fafafa', padding: '10px', marginTop: '10px', borderRadius: '8px' }}>
+        <div className={styles.profileCardList}>
             {cards.length === 0 ? (
-                <div style={{ textAlign: 'center', color: '#999' }}>No cards found</div>
+                <div className={styles.profileCardListEmpty}>No cards found</div>
             ) : (
                 <List>
                     {cards.map(card => (
                         <List.Item key={card.id}>
-                            <div style={{ display: 'flex', justifyContent: 'space-between' }}>
-                                <span style={{ fontWeight: 'bold' }}>{card.word || extractText(card.front)}</span>
-                                <span style={{ color: '#666', fontSize: '12px' }}>{extractText(card.back).substring(0, 20)}...</span>
+                            <div className={styles.profileCardItem}>
+                                <span className={styles.profileCardWord}>{card.word || extractText(card.front)}</span>
+                                <span className={styles.profileCardDefinition}>{extractText(card.back).substring(0, 20)}...</span>
                             </div>
                         </List.Item>
                     ))}
@@ -112,13 +113,13 @@ export default function ProfilePage() {
     );
 
     const renderDecksList = () => (
-        <div style={{ maxHeight: '200px', overflowY: 'auto', background: '#fafafa', padding: '10px', marginTop: '10px', borderRadius: '8px' }}>
+        <div className={styles.profileDeckList}>
             <List>
                 {decks.map(deck => (
                     <List.Item key={deck.id}>
-                        <div style={{ display: 'flex', justifyContent: 'space-between' }}>
+                        <div className={styles.profileDeckItem}>
                             <span>{deck.name}</span>
-                            <span style={{ color: '#666' }}>{deck.learned_cards || 0}/{deck.total_cards}</span>
+                            <span className={styles.profileDeckCount}>{deck.learned_cards || 0}/{deck.total_cards}</span>
                         </div>
                     </List.Item>
                 ))}
@@ -136,59 +137,59 @@ export default function ProfilePage() {
     };
 
     return (
-        <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+        <div className={styles.profileContainer}>
             <NavBar 
               onBack={() => history.push('/')} 
               right={
                 <SetOutline 
                   onClick={() => history.push('/settings')}
-                  style={{ fontSize: '20px', cursor: 'pointer' }}
+                  className={styles.profileSettingsIcon}
                 />
               }
             >个人中心</NavBar>
 
-            <div style={{ padding: '0.2rem' }}>
-                <AntdCard title="Today's Progress" style={{ marginBottom: '0.2rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
+            <div className={styles.profileContent}>
+                <AntdCard title="Today's Progress" className={styles.profileCard}>
+                    <div className={styles.profileProgress}>
                         <div>
-                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1677ff' }}>
+                            <div className={`${styles.profileStatValue} ${styles.reviewed}`}>
                                 {dailyStats?.total_cards || 0}
                             </div>
-                            <div style={{ color: '#666' }}>Reviewed</div>
+                            <div className={styles.profileStatLabel}>Reviewed</div>
                         </div>
-                        <div onClick={toggleTodayLearned} style={{ cursor: 'pointer' }}>
-                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
+                        <div onClick={toggleTodayLearned} className={styles.profileStatItem}>
+                            <div className={`${styles.profileStatValue} ${styles.learned}`}>
                                 {dailyStats?.learned_cards || 0} {expandedTodayLearned ? '▲' : '▼'}
                             </div>
-                            <div style={{ color: '#666' }}>Learned</div>
+                            <div className={styles.profileStatLabel}>Learned</div>
                         </div>
                         <div>
-                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#722ed1' }}>
+                            <div className={`${styles.profileStatValue} ${styles.time}`}>
                                 {dailyStats ? Math.round(dailyStats.time_spent / 1000 / 60) : 0}m
                             </div>
-                            <div style={{ color: '#666' }}>Time</div>
+                            <div className={styles.profileStatLabel}>Time</div>
                         </div>
                     </div>
                     {expandedTodayLearned && renderCardList(todayLearnedCards)}
                 </AntdCard>
 
-                <AntdCard title="Overall Statistics" style={{ marginBottom: '0.2rem' }}>
-                    <div style={{ display: 'flex', justifyContent: 'space-around', textAlign: 'center' }}>
+                <AntdCard title="Overall Statistics" className={styles.profileCard}>
+                    <div className={styles.profileProgress}>
                         <div>
-                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#1677ff' }}>{totalCards}</div>
-                            <div style={{ color: '#666' }}>Total Cards</div>
+                            <div className={`${styles.profileStatValue} ${styles.reviewed}`}>{totalCards}</div>
+                            <div className={styles.profileStatLabel}>Total Cards</div>
                         </div>
-                        <div onClick={toggleAllLearned} style={{ cursor: 'pointer' }}>
-                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#52c41a' }}>
+                        <div onClick={toggleAllLearned} className={styles.profileStatItem}>
+                            <div className={`${styles.profileStatValue} ${styles.learned}`}>
                                 {learnedCards} {expandedAllLearned ? '▲' : '▼'}
                             </div>
-                            <div style={{ color: '#666' }}>Learned</div>
+                            <div className={styles.profileStatLabel}>Learned</div>
                         </div>
-                        <div onClick={() => setExpandedDecksList(!expandedDecksList)} style={{ cursor: 'pointer' }}>
-                            <div style={{ fontSize: '24px', fontWeight: 'bold', color: '#faad14' }}>
+                        <div onClick={() => setExpandedDecksList(!expandedDecksList)} className={styles.profileStatItem}>
+                            <div className={`${styles.profileStatValue} ${styles.decks}`}>
                                 {decks.length} {expandedDecksList ? '▲' : '▼'}
                             </div>
-                            <div style={{ color: '#666' }}>Decks</div>
+                            <div className={styles.profileStatLabel}>Decks</div>
                         </div>
                     </div>
                     {expandedAllLearned && renderCardList(allLearnedCards)}
@@ -197,24 +198,24 @@ export default function ProfilePage() {
 
 
 
-                <h3 style={{ marginBottom: '0.2rem' }}>My Decks</h3>
+                <h3 className={styles.profileDecksTitle}>My Decks</h3>
                 {decks.map(deck => {
                     const lastStudied = deck.last_studied ? new Date(deck.last_studied).toLocaleDateString() : 'Never';
                     
                     return (
                         <AntdCard 
                             key={deck.id} 
-                            style={{ marginBottom: '0.2rem' }}
+                            className={styles.profileDeckCard}
                             onClick={() => history.push(`/profile/learned?deckId=${deck.id}`)}
                         >
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span style={{ fontWeight: 'bold' }}>{deck.name}</span>
+                            <div className={styles.profileDeckHeader}>
+                                <span className={styles.profileDeckName}>{deck.name}</span>
                                 <Tag color="primary">{deck.learned_cards || 0} / {deck.total_cards}</Tag>
                             </div>
-                            <div style={{ fontSize: '12px', color: '#999', marginTop: '5px' }}>
+                            <div className={styles.profileDeckInfo}>
                                 Last studied: {lastStudied}
                             </div>
-                            <ProgressBar percent={deck.total_cards > 0 ? ((deck.learned_cards || 0) / deck.total_cards) * 100 : 0} style={{ marginTop: '10px' }} />
+                            <ProgressBar percent={deck.total_cards > 0 ? ((deck.learned_cards || 0) / deck.total_cards) * 100 : 0} className={styles.profileDeckProgress} />
                         </AntdCard>
                     );
                 })}

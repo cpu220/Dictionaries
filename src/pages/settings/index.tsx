@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { NavBar, Card as AntdCard, List, Radio, Space } from 'antd-mobile';
 import { history } from 'umi';
+import styles from './index.less';
 
 export default function SettingsPage() {
   const [newCardOrder, setNewCardOrder] = useState<'random' | 'sequential'>('random');
@@ -24,14 +25,14 @@ export default function SettingsPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+    <div className={styles.settingsContainer}>
       <NavBar onBack={() => history.push('/profile')}>设置</NavBar>
 
-      <div style={{ padding: '0.2rem' }}>
-        <AntdCard title="学习选项" style={{ marginBottom: '0.2rem' }}>
+      <div className={styles.settingsContent}>
+        <AntdCard title="学习选项" className={styles.settingsCard}>
           <List>
             <List.Item>
-              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className={styles.settingsItem}>
                 <span>新卡片排序</span>
                 <Radio.Group value={newCardOrder} onChange={val => handleOrderChange(val as any)}>
                   <Space direction='horizontal'>
@@ -44,12 +45,12 @@ export default function SettingsPage() {
           </List>
         </AntdCard>
 
-        <AntdCard title="数据管理" style={{ marginBottom: '0.2rem' }}>
+        <AntdCard title="数据管理" className={styles.settingsCard}>
           <List>
             <List.Item
               onClick={() => history.push('/import')}
               clickable
-              prefix={<span style={{ fontSize: '0.2rem' }}>📥</span>}
+              prefix={<span className={styles.settingsPrefix}>📥</span>}
             >
               导入 Anki 卡组
             </List.Item>

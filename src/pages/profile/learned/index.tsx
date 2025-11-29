@@ -5,6 +5,7 @@ import { CardService } from '@/services/database/indexeddb/CardService';
 import { DeckService } from '@/services/database/indexeddb/DeckService';
 import { Card, Deck } from '@/services/database/types';
 import { tts } from '@/utils/tts';
+import styles from './index.less';
 
 export default function LearnedCardsPage() {
   const location = useLocation();
@@ -76,10 +77,10 @@ export default function LearnedCardsPage() {
   };
 
   return (
-    <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
+    <div className={styles.learnedContainer}>
       <NavBar onBack={() => history.back()}>{deck ? deck.name : 'Learned Cards'}</NavBar>
       
-      <div style={{ padding: '10px', background: '#fff' }}>
+      <div className={styles.learnedSearchContainer}>
         <SearchBar 
           placeholder="Search learned cards" 
           value={searchText} 
@@ -87,7 +88,7 @@ export default function LearnedCardsPage() {
         />
       </div>
 
-      <div style={{ paddingBottom: '20px' }}>
+      <div className={styles.learnedContent}>
         {filteredCards.length === 0 && !loading ? (
           <Empty description="No learned cards found" />
         ) : (
@@ -99,8 +100,8 @@ export default function LearnedCardsPage() {
                 arrow
                 description={cleanHtml(card.back).substring(0, 50) + '...'}
               >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                  <span style={{ fontWeight: 'bold', fontSize: '16px' }}>{card.word || cleanHtml(card.front)}</span>
+                <div className={styles.learnedCardItem}>
+                  <span className={styles.learnedCardWord}>{card.word || cleanHtml(card.front)}</span>
                   <Button 
                     size='mini' 
                     fill='none'

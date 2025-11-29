@@ -6,6 +6,7 @@ import Satellite from './Satellite';
 import { DeckStats } from '../utils/deckProgress';
 import { PlanetConfig, SatelliteConfig } from '@/consts/home3d';
 import { DIFFICULTY_LEVELS } from '@/consts/difficulty';
+import './Planet.less';
 
 interface PlanetProps {
   position: [number, number, number];
@@ -181,29 +182,14 @@ export default function Planet({ position, deckName, deckId, stats, color, textu
 
       {/* Deck name label using HTML */}
       <Html position={[0, 1.8, 0]} center>
-        <div style={{
-          color: 'white',
-          fontSize: '0.48rem',
-          fontWeight: 'bold',
-          textShadow: '0.02rem 0.02rem 0.04rem rgba(0,0,0,0.8)',
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}>
+        <div className="planet-name">
           {deckName}
         </div>
       </Html>
 
       {/* Word count label */}
       <Html position={[0, 1.4, 0]} center>
-        <div style={{
-          color: '#aaa',
-          fontSize: '0.32rem',
-          textShadow: '0.01rem 0.01rem 0.02rem rgba(0,0,0,0.8)',
-          whiteSpace: 'nowrap',
-          pointerEvents: 'none',
-          userSelect: 'none',
-        }}>
+        <div className="planet-word-count">
           {stats.totalWords} words
         </div>
       </Html>

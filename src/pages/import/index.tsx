@@ -64,7 +64,7 @@ const ImportPage: React.FC = () => {
           type="file"
           accept=".apkg"
           ref={fileInputRef}
-          style={{ display: 'none' }}
+          className={styles.fileInput}
           onChange={handleFileChange}
         />
 

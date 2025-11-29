@@ -48,7 +48,7 @@ const DecksPage: React.FC = () => {
                   <Tag color="success">{deck.learned_cards} Learned</Tag>
                 </div>
               </div>
-              <div style={{ display: 'flex', gap: '8px' }}>
+              <div className={styles.deckActions}>
                 <Button size="small" color="primary" fill="outline">
                   Study
                 </Button>

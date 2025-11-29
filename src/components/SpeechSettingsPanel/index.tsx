@@ -1,5 +1,6 @@
 import React from 'react';
 import { Slider, List } from 'antd-mobile';
+import './index.less';
 
 interface SpeechSettingsPanelProps {
   rate: number;
@@ -12,19 +13,7 @@ interface SpeechSettingsPanelProps {
  */
 const SpeechSettingsPanel: React.FC<SpeechSettingsPanelProps> = ({ rate, onRateChange }) => {
   return (
-    <div style={{
-      position: 'absolute',
-      top: '50px',
-      right: '16px',
-      width: '300px',
-      backgroundColor: 'white',
-      borderRadius: '8px',
-      boxShadow: '0 2px 12px 0 rgba(0, 0, 0, 0.15)',
-      zIndex: 1000,
-      padding: '12px',
-      maxHeight: '80vh',
-      overflow: 'auto'
-    }}>
+    <div className="speech-settings-panel">
       <List header='Settings'>
         <List.Item
           title="Speech Rate"

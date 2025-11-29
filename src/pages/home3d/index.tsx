@@ -7,6 +7,7 @@ import Scene from './components/Scene';
 import { getAllDecksProgress, DeckStats } from './utils/deckProgress';
 import { DECKS } from '@/consts/decks';
 import { SCENE_CONFIG } from '@/consts/home3d';
+import styles from './index.less';
 
 export default function Home3D() {
   const [decksProgress, setDecksProgress] = useState<Record<string, DeckStats>>({});
@@ -33,23 +34,15 @@ export default function Home3D() {
   };
 
   return (
-    <div style={{ width: '100vw', height: '100vh', background: '#000000' }}>
+    <div className={styles.home3dContainer}>
       <NavBar
         back={null}
-        style={{ 
-          background: 'rgba(0, 0, 0, 0.8)', 
-          color: '#ffffff',
-          position: 'absolute',
-          top: 0,
-          left: 0,
-          right: 0,
-          zIndex: 1000,
-        }}
+        className={styles.home3dNavbar}
         right={
           <Button
             size='small'
             onClick={handleBackToOriginal}
-            style={{ fontSize: '0.32rem' }}
+            className={styles.home3dBackButton}
           >
             Back to 2D
           </Button>
@@ -64,7 +57,7 @@ export default function Home3D() {
             position: [SCENE_CONFIG.INITIAL_CAMERA_POSITION.x, SCENE_CONFIG.INITIAL_CAMERA_POSITION.y, SCENE_CONFIG.INITIAL_CAMERA_POSITION.z], 
             fov: SCENE_CONFIG.CAMERA_FOV 
           }}
-          style={{ width: '100%', height: '100%' }}
+          className={styles.home3dCanvas}
         >
           <Scene 
             decks={DECKS}
@@ -82,21 +75,9 @@ export default function Home3D() {
       )}
 
       {/* Instructions overlay */}
-      <div style={{
-        position: 'absolute',
-        bottom: '0.2rem',
-        left: '0.2rem',
-        right: '0.2rem',
-        color: 'white',
-        textAlign: 'center',
-        fontSize: '0.14rem',
-        background: 'rgba(0, 0, 0, 0.6)',
-        padding: '0.1rem',
-        borderRadius: '0.08rem',
-        zIndex: 10,
-      }}>
-        <p style={{ margin: '0 0 0.05rem 0',fontSize:'0.3rem' }}>Drag to rotate • Scroll to zoom • Click planet to study</p>
-        {/* <p style={{ margin: 0, fontSize: '0.3rem', color: '#aaa' }}>
+      <div className={styles.home3dInstructions}>
+        <p className={styles.home3dInstructionsTitle}>Drag to rotate • Scroll to zoom • Click planet to study</p>
+        {/* <p className={styles.home3dInstructionsLegend}>
           🔴 Low Proficiency • 🟡 Medium • 🟢 High
         </p> */}
       </div>

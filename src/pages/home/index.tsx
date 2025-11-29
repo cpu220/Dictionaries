@@ -4,6 +4,7 @@ import { history } from 'umi';
 import { AppOutline } from 'antd-mobile-icons';
 import { DeckService } from '@/services/database/indexeddb/DeckService';
 import { Deck } from '@/services/database/types';
+import styles from './index.less';
 
 export default function HomePage() {
   const [decks, setDecks] = useState<Deck[]>([]);
@@ -36,80 +37,46 @@ export default function HomePage() {
   };
 
   return (
-    <div style={{ padding: '0 0 0.2rem 0', minHeight: '100vh', background: '#f5f5f5' }}>
+    <div className={styles.homeContainer}>
       <NavBar back={null}>Vocab Master</NavBar>
 
-      <div style={{ padding: '0.2rem' }}>
-        <h2 style={{ marginBottom: '0.2rem', fontWeight: '600' }}>我的卡组</h2>
+      <div className={styles.homeContent}>
+        <h2 className={styles.homeTitle}>我的卡组</h2>
 
         {loading ? (
-          <div style={{ textAlign: 'center', padding: '0.4rem', color: '#888' }}>
+          <div className={styles.homeLoading}>
             加载中...
           </div>
         ) : decks.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '0.4rem', color: '#888' }}>
+          <div className={styles.homeEmpty}>
             <p>暂无卡组</p>
-            <p style={{ fontSize: '0.14rem', marginTop: '0.1rem' }}>
+            <p className={styles.homeEmptyText}>
               点击下方"导入 Anki 卡组"开始学习
             </p>
           </div>
         ) : (
-          <div
-            style={{
-              display: 'flex',
-              flexWrap: 'wrap',
-              gap: '0.16rem',
-              // justifyContent: 'space-between',
-            }}
-          >
+          <div className={styles.homeDecksGrid}>
             {decks.map(deck => (
               <Card
                 key={deck.id}
-                style={{
-                  // width: 'calc(50% - 0.08rem)',
-                  width:'100%',
-                  borderRadius: '0.12rem',
-                  cursor: 'pointer',
-                }}
+                className={styles.homeDeckCard}
                 onClick={() => history.push(`/study?deckId=${deck.id}`)}
               >
-                <div style={{ padding: '0.08rem' }}>
-                  <div
-                    style={{
-                      fontSize: '0.46rem',
-                      fontWeight: '600',
-                      marginBottom: '0.08rem',
-                      overflow: 'hidden',
-                      textOverflow: 'ellipsis',
-                      whiteSpace: 'nowrap',
-                    }}
-                  >
+                <div className={styles.homeDeckContent}>
+                  <div className={styles.homeDeckName}>
                     {deck.name}
                   </div>
                   <div>{`/study?deckId=${deck.id}`}</div>
-                  <div
-                    style={{
-                      fontSize: '0.32rem',
-                      color: '#888',
-                      marginBottom: '0.12rem',
-                    }}
-                  >
+                  <div className={styles.homeDeckStats}>
                     总计: {deck.total_cards} 词
                     <br />
                     已学: {deck.learned_cards} 词
                   </div>
                   <ProgressBar
                     percent={getProgress(deck)}
-                    style={{ '--track-width': '4px' } as any}
+                    className={styles.homeProgressBar}
                   />
-                  <div
-                    style={{
-                      fontSize: '0.2',
-                      color: '#1677ff',
-                      marginTop: '0.08rem',
-                      textAlign: 'right',
-                    }}
-                  >
+                  <div className={styles.homeProgressPercent}>
                     {getProgress(deck)}%
                   </div>
                 </div>
