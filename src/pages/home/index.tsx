@@ -27,7 +27,12 @@ export default function HomePage() {
 
   const getProgress = (deck: Deck) => {
     if (deck.total_cards === 0) return 0;
-    return Math.round((deck.learned_cards / deck.total_cards) * 100);
+    
+    // 计算百分比，处理负数情况
+    const percentage = (deck.learned_cards / deck.total_cards) * 100;
+    
+    // 保留2位小数并转换为数字（自动去掉末尾的0）
+    return Number(percentage.toFixed(2));
   };
 
   return (
