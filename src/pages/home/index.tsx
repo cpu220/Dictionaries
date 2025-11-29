@@ -1,63 +1,133 @@
-import React from 'react';
-import { Button, List, NavBar } from 'antd-mobile';
+import React, { useEffect, useState } from 'react';
+import { Button, Card, NavBar, ProgressBar, List } from 'antd-mobile';
 import { history } from 'umi';
 import { AppOutline } from 'antd-mobile-icons';
-import { DECKS } from '@/consts/decks';
+import { DeckService } from '@/services/database/indexeddb/DeckService';
+import { Deck } from '@/services/database/types';
 
 export default function HomePage() {
+  const [decks, setDecks] = useState<Deck[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const loadDecks = async () => {
+      try {
+        const deckService = new DeckService();
+        const allDecks = await deckService.getAllDecks();
+        setDecks(allDecks);
+      } catch (error) {
+        console.error('Failed to load decks:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    loadDecks();
+  }, []);
+
+  const getProgress = (deck: Deck) => {
+    if (deck.total_cards === 0) return 0;
+    return Math.round((deck.learned_cards / deck.total_cards) * 100);
+  };
 
   return (
     <div style={{ padding: '0 0 0.2rem 0', minHeight: '100vh', background: '#f5f5f5' }}>
       <NavBar back={null}>Vocab Master</NavBar>
 
       <div style={{ padding: '0.2rem' }}>
-        <h2 style={{ marginBottom: '0.2rem', fontWeight: '600' }}>Select a Deck</h2>
+        <h2 style={{ marginBottom: '0.2rem', fontWeight: '600' }}>我的卡组</h2>
 
-        <List header='Available Decks'>
-          {DECKS.map(deck => (
-            <List.Item
-              key={deck.id}
-              prefix={<AppOutline />}
-              onClick={() => history.push(`/study?deck=${deck.id}`)}
-              clickable
-              extra={`${deck.count} words`}
-            >
-              {deck.name}
-            </List.Item>
-          ))}
-          <List.Item
+        {loading ? (
+          <div style={{ textAlign: 'center', padding: '0.4rem', color: '#888' }}>
+            加载中...
+          </div>
+        ) : decks.length === 0 ? (
+          <div style={{ textAlign: 'center', padding: '0.4rem', color: '#888' }}>
+            <p>暂无卡组</p>
+            <p style={{ fontSize: '0.14rem', marginTop: '0.1rem' }}>
+              点击下方"导入 Anki 卡组"开始学习
+            </p>
+          </div>
+        ) : (
+          <div
+            style={{
+              display: 'flex',
+              flexWrap: 'wrap',
+              gap: '0.16rem',
+              // justifyContent: 'space-between',
+            }}
+          >
+            {decks.map(deck => (
+              <Card
+                key={deck.id}
+                style={{
+                  // width: 'calc(50% - 0.08rem)',
+                  width:'100%',
+                  borderRadius: '0.12rem',
+                  cursor: 'pointer',
+                }}
+                onClick={() => history.push(`/study?deck=${deck.id}`)}
+              >
+                <div style={{ padding: '0.08rem' }}>
+                  <div
+                    style={{
+                      fontSize: '0.46rem',
+                      fontWeight: '600',
+                      marginBottom: '0.08rem',
+                      overflow: 'hidden',
+                      textOverflow: 'ellipsis',
+                      whiteSpace: 'nowrap',
+                    }}
+                  >
+                    {deck.name}
+                  </div>
+                  <div
+                    style={{
+                      fontSize: '0.32rem',
+                      color: '#888',
+                      marginBottom: '0.12rem',
+                    }}
+                  >
+                    总计: {deck.total_cards} 词
+                    <br />
+                    已学: {deck.learned_cards} 词
+                  </div>
+                  <ProgressBar
+                    percent={getProgress(deck)}
+                    style={{ '--track-width': '4px' } as any}
+                  />
+                  <div
+                    style={{
+                      fontSize: '0.2',
+                      color: '#1677ff',
+                      marginTop: '0.08rem',
+                      textAlign: 'right',
+                    }}
+                  >
+                    {getProgress(deck)}%
+                  </div>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
+
+        <List header='快捷操作' style={{ marginTop: '0.24rem' }}>
+          {/* <List.Item
             onClick={() => history.push('/decks')}
             clickable
             prefix={<span style={{ fontSize: '0.2rem' }}>📚</span>}
           >
-            My Decks (Anki)
-          </List.Item>
+            我的卡组 (Anki)
+          </List.Item> */}
           <List.Item
             onClick={() => history.push('/import')}
             clickable
             prefix={<span style={{ fontSize: '0.2rem' }}>📥</span>}
           >
-            Import Anki Deck
-          </List.Item>
-          <List.Item
-            onClick={() => history.push('/home3d')}
-            clickable
-            prefix={<span style={{ fontSize: '0.2rem' }}>🌍</span>}
-          >
-            3D Planet View (Beta)
-          </List.Item>
-          <List.Item
-            onClick={() => history.push('/profile')}
-            clickable
-            prefix={<span style={{ fontSize: '0.2rem' }}>👤</span>}
-          >
-            Profile & Mistakes
+            导入 Anki 卡组
           </List.Item>
         </List>
-
-        <div style={{ marginTop: '0.2rem', textAlign: 'center', color: '#888', fontSize: '0.14rem' }}>
-          <p>More decks coming soon...</p>
-        </div>
       </div>
     </div>
   );

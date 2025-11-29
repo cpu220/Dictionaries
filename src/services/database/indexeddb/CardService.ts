@@ -45,6 +45,21 @@ export class CardService implements ICardService {
     return newCards.slice(0, limit);
   }
 
+  async getLearnedCards(deckId?: string): Promise<Card[]> {
+    const db = await getDB();
+    let cards: Card[] = [];
+    
+    if (deckId) {
+      cards = await db.getAllFromIndex('cards', 'deck_id', deckId);
+    } else {
+      cards = await db.getAll('cards');
+    }
+    
+    // Filter for cards that are NOT New (queue != 0)
+    // Or more strictly, type != 0. Let's use type != 0 as established in StatsService
+    return cards.filter(card => card.type !== 0);
+  }
+
   async addCard(card: Card): Promise<string> {
     const db = await getDB();
     await db.put('cards', card);

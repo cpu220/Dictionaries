@@ -6,6 +6,7 @@ export interface Deck {
   learned_cards: number;
   created_at: number;
   updated_at: number;
+  last_studied?: number; // Timestamp of last review
   metadata?: Record<string, any>;
 }
 
@@ -59,6 +60,14 @@ export interface ReviewLog {
   type: number; // 0=learn, 1=review, 2=relearn, 3=cram
 }
 
+export interface DailyStudyStat {
+  date: string; // YYYY-MM-DD
+  total_cards: number; // Total cards reviewed today
+  learned_cards: number; // New cards learned today
+  review_cards: number; // Review cards studied today
+  time_spent: number; // Total time spent in ms
+}
+
 export interface IDeckService {
   getAllDecks(): Promise<Deck[]>;
   getDeck(id: string): Promise<Deck | undefined>;
@@ -72,6 +81,7 @@ export interface ICardService {
   getCardsByDeck(deckId: string): Promise<Card[]>;
   getDueCards(deckId: string, limit: number): Promise<Card[]>;
   getNewCards(deckId: string, limit: number, order: 'random' | 'sequential'): Promise<Card[]>;
+  getLearnedCards(deckId?: string): Promise<Card[]>;
   addCard(card: Card): Promise<string>;
   updateCard(card: Card): Promise<void>;
 }

@@ -3,6 +3,7 @@ import { Button, Card as AntCard, Toast, NavBar, Slider, Popover, List } from 'a
 import { history, useLocation } from 'umi';
 import { SoundOutline, SetOutline } from 'antd-mobile-icons';
 import { CardService } from '@/services/database/indexeddb/CardService';
+import { StatsService } from '@/services/database/indexeddb/StatsService';
 import { Scheduler } from '@/services/scheduling/Scheduler';
 import { Card } from '@/services/database/types';
 import { StudySession } from '@/interfaces';
@@ -32,6 +33,7 @@ const StudyPage: React.FC = () => {
   const [rate, setRate] = useState(1);
 
   const cardService = new CardService();
+  const statsService = new StatsService();
   const scheduler = new Scheduler();
 
   useEffect(() => {
@@ -142,8 +144,22 @@ const StudyPage: React.FC = () => {
   const handleAnswer = async (rating: number) => {
     if (!currentCard || !session) return;
 
+    const startTime = Date.now(); // In a real app, track actual time spent
+    // For now, we'll estimate or just use a placeholder, or we could track time since card loaded
+    // But to keep it simple, let's just assume a fixed time or 0 for now if we don't have a timer
+    const timeTaken = 0; 
+
     const updatedCard = scheduler.answerCard(currentCard, rating);
     await cardService.updateCard(updatedCard);
+
+    // Log statistics
+    await statsService.logReview(
+      currentCard.id, 
+      currentCard.deck_id, 
+      rating, 
+      timeTaken, 
+      currentCard.type
+    );
 
     // Update session progress
     const updatedSession: StudySession = {
@@ -178,17 +194,28 @@ const StudyPage: React.FC = () => {
   };
 
   const renderSettings = () => (
-    <List>
-      <List.Item title="Speed">
-        <Slider 
-          min={0.5} 
-          max={2} 
-          step={0.1} 
-          value={rate} 
-          onChange={(val) => setRate(val as number)} 
-        />
-      </List.Item>
-    </List>
+    <div style={{ width: '300px' }}>
+      <List header='Settings'>
+        <List.Item 
+          title="Speech Rate" 
+          extra={`${rate.toFixed(1)}x`}
+        >
+          <Slider 
+            min={0.5} 
+            max={2} 
+            step={0.1} 
+            value={rate} 
+            onChange={(val) => setRate(val as number)} 
+            marks={{
+              0.5: '0.5',
+              1.0: '1.0',
+              1.5: '1.5',
+              2.0: '2.0'
+            }}
+          />
+        </List.Item>
+      </List>
+    </div>
   );
 
   if (loading) {
@@ -280,13 +307,9 @@ const StudyPage: React.FC = () => {
           </div>
         )}
       </div>
-
-      <div className={styles.controls}>
-        {!showAnswer ? (
-          <div style={{ textAlign: 'center', color: '#999', padding: '10px' }}>
-            点击卡片查看答案
-          </div>
-        ) : (
+      {
+        showAnswer && (
+           <div className={styles.controls}>
           <div className={styles.ratings}>
             <Button 
               className={styles.rateBtn} 
@@ -317,8 +340,19 @@ const StudyPage: React.FC = () => {
               Easy
             </Button>
           </div>
+          </div>
+        )
+      }
+
+      {/* <div className={styles.controls}>
+        {!showAnswer ? (
+          <div style={{ textAlign: 'center', color: '#999', padding: '10px' }}>
+            点击卡片查看答案
+          </div>
+        ) : (
+          
         )}
-      </div>
+      </div> */}
     </div>
   );
 };
