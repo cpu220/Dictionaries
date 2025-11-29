@@ -117,22 +117,7 @@ export default function HomePage() {
           </div>
         )}
 
-        <List header='快捷操作' style={{ marginTop: '0.24rem' }}>
-          {/* <List.Item
-            onClick={() => history.push('/decks')}
-            clickable
-            prefix={<span style={{ fontSize: '0.2rem' }}>📚</span>}
-          >
-            我的卡组 (Anki)
-          </List.Item> */}
-          <List.Item
-            onClick={() => history.push('/import')}
-            clickable
-            prefix={<span style={{ fontSize: '0.2rem' }}>📥</span>}
-          >
-            导入 Anki 卡组
-          </List.Item>
-        </List>
+
       </div>
     </div>
   );

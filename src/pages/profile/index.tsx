@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { NavBar, Card as AntdCard, List, Empty, Tag, ProgressBar, Switch, Radio, Space } from 'antd-mobile';
+import { SetOutline } from 'antd-mobile-icons';
 import { history } from 'umi';
 import { DeckService } from '@/services/database/indexeddb/DeckService';
 import { CardService } from '@/services/database/indexeddb/CardService';
@@ -136,7 +137,15 @@ export default function ProfilePage() {
 
     return (
         <div style={{ minHeight: '100vh', background: '#f5f5f5' }}>
-            <NavBar onBack={() => history.push('/')}>Profile & Settings</NavBar>
+            <NavBar 
+              onBack={() => history.push('/')} 
+              right={
+                <SetOutline 
+                  onClick={() => history.push('/settings')}
+                  style={{ fontSize: '20px', cursor: 'pointer' }}
+                />
+              }
+            >个人中心</NavBar>
 
             <div style={{ padding: '0.2rem' }}>
                 <AntdCard title="Today's Progress" style={{ marginBottom: '0.2rem' }}>
@@ -186,21 +195,7 @@ export default function ProfilePage() {
                     {expandedDecksList && renderDecksList()}
                 </AntdCard>
 
-                <AntdCard title="Settings" style={{ marginBottom: '0.2rem' }}>
-                    <List header="Study Options">
-                        <List.Item>
-                            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <span>New Card Order</span>
-                                <Radio.Group value={newCardOrder} onChange={val => handleOrderChange(val as any)}>
-                                    <Space direction='horizontal'>
-                                        <Radio value='random'>Random</Radio>
-                                        <Radio value='sequential'>Sequential</Radio>
-                                    </Space>
-                                </Radio.Group>
-                            </div>
-                        </List.Item>
-                    </List>
-                </AntdCard>
+
 
                 <h3 style={{ marginBottom: '0.2rem' }}>My Decks</h3>
                 {decks.map(deck => {

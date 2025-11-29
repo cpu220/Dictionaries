@@ -22,4 +22,8 @@ const mergedConfig = {
 };
 
 // 导出合并后的配置
-export default defineConfig(mergedConfig);
+export default defineConfig({
+  ...mergedConfig,
+  // 解决esbuild helpers冲突问题
+  esbuildMinifyIIFE: true,
+});

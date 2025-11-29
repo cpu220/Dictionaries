@@ -15,6 +15,7 @@ export default {
     { path: "/study", component: "study/index" },
     { path: "/import", component: "import/index" },
     { path: "/decks", component: "decks/index" },
+    { path: "/settings", component: "settings/index" },
   ],
 
   // npm客户端配置
