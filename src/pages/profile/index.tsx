@@ -6,6 +6,7 @@ import { DeckService } from '@/services/database/indexeddb/DeckService';
 import { CardService } from '@/services/database/indexeddb/CardService';
 import { StatsService } from '@/services/database/indexeddb/StatsService';
 import { Deck, DailyStudyStat, Card } from '@/services/database/types';
+import ContributionCalendar from 'react-github-contribution-calendar';
 import styles from './index.less';
 
 export default function ProfilePage() {
@@ -15,6 +16,7 @@ export default function ProfilePage() {
     const [newCardOrder, setNewCardOrder] = useState<'random' | 'sequential'>('random');
     const [loading, setLoading] = useState(true);
     const [dailyStats, setDailyStats] = useState<DailyStudyStat | null>(null);
+    const [allDailyStats, setAllDailyStats] = useState<DailyStudyStat[]>([]);
     
     // Inline expansion state
     const [expandedTodayLearned, setExpandedTodayLearned] = useState(false);
@@ -58,6 +60,10 @@ export default function ProfilePage() {
         if (todayStats) {
             setDailyStats(todayStats);
         }
+
+        // Load all daily stats for contribution calendar
+        const allStats = await statsService.getAllDailyStats();
+        setAllDailyStats(allStats);
 
         setLoading(false);
     };
@@ -136,6 +142,15 @@ export default function ProfilePage() {
         return (tmp.textContent || tmp.innerText || '').trim();
     };
 
+    // Convert daily stats to contribution calendar format
+    const getContributionData = () => {
+        const data: Record<string, number> = {};
+        allDailyStats.forEach(stat => {
+            data[stat.date] = stat.total_cards || 0;
+        });
+        return data;
+    };
+
     return (
         <div className={styles.profileContainer}>
             <NavBar 
@@ -149,6 +164,19 @@ export default function ProfilePage() {
             >个人中心</NavBar>
 
             <div className={styles.profileContent}>
+                 <AntdCard title="Study Activity" className={styles.profileCard}>
+                    <div className={styles.profileContributionCalendar}>
+                        <ContributionCalendar
+                            values={getContributionData()}
+                            until={new Date().toISOString().split('T')[0]}
+                            weekLabelAttributes={undefined}
+                            monthLabelAttributes={undefined}
+                            panelAttributes={undefined}
+                            panelColors={['#EEE', '#C6E48B', '#7BC96F', '#239A3B', '#196127']}
+                        />
+                    </div>
+                </AntdCard>
+                
                 <AntdCard title="Today's Progress" className={styles.profileCard}>
                     <div className={styles.profileProgress}>
                         <div>
@@ -196,7 +224,7 @@ export default function ProfilePage() {
                     {expandedDecksList && renderDecksList()}
                 </AntdCard>
 
-
+               
 
                 <h3 className={styles.profileDecksTitle}>My Decks</h3>
                 {decks.map(deck => {

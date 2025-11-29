@@ -331,7 +331,7 @@
   dependencies:
     "@babel/helper-plugin-utils" "^7.27.1"
 
-"@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.21.0", "@babel/runtime@^7.7.6", "@babel/runtime@^7.7.7":
+"@babel/runtime@^7.11.1", "@babel/runtime@^7.11.2", "@babel/runtime@^7.12.5", "@babel/runtime@^7.17.8", "@babel/runtime@^7.18.0", "@babel/runtime@^7.18.3", "@babel/runtime@^7.2.0", "@babel/runtime@^7.21.0", "@babel/runtime@^7.7.6", "@babel/runtime@^7.7.7":
   version "7.28.4"
   resolved "https://registry.npmmirror.com/@babel/runtime/-/runtime-7.28.4.tgz"
   integrity sha512-Q/N6JNWvIvPnLDvjlE1OUBLPQHH6l3CltCEsHIujp45zQUSSh8K+gHnaEX45yAT1nyngnINhvWtzN+Nb9D8RAQ==
@@ -3231,7 +3231,7 @@ data-view-byte-offset@^1.0.1:
     es-errors "^1.3.0"
     is-data-view "^1.0.1"
 
-dayjs@^1.11.7, dayjs@^1.9.1:
+dayjs@^1.11.6, dayjs@^1.11.7, dayjs@^1.9.1:
   version "1.11.19"
   resolved "https://registry.npmmirror.com/dayjs/-/dayjs-1.11.19.tgz"
   integrity sha512-t5EcLVS6QPBNqM2z8fakk/NKel+Xzshgt8FFKAn+qwlD1pzZWxh0nVCrvFK7ZDb6XucZeF9z8C7CBWTRIVApAw==
@@ -4424,6 +4424,11 @@ get-intrinsic@^1.1.3, get-intrinsic@^1.2.4, get-intrinsic@^1.2.5, get-intrinsic@
     has-symbols "^1.1.0"
     hasown "^2.0.2"
     math-intrinsics "^1.1.0"
+
+get-node-dimensions@^1.2.1:
+  version "1.2.1"
+  resolved "https://registry.npmmirror.com/get-node-dimensions/-/get-node-dimensions-1.2.1.tgz"
+  integrity sha512-2MSPMu7S1iOTL+BOa6K1S62hB2zUAYNF/lV0gSVlOaacd087lc6nR1H1r0e3B1CerTo+RceOmi1iJW+vp21xcQ==
 
 get-package-type@^0.1.0:
   version "0.1.0"
@@ -6960,7 +6965,7 @@ promise-worker-transferable@^1.0.4:
     is-promise "^2.1.0"
     lie "^3.0.2"
 
-prop-types@^15.6.0, prop-types@^15.7.2, prop-types@^15.8.1:
+prop-types@^15.6.0, prop-types@^15.6.2, prop-types@^15.7.2, prop-types@^15.8.1:
   version "15.8.1"
   resolved "https://registry.npmmirror.com/prop-types/-/prop-types-15.8.1.tgz"
   integrity sha512-oj87CgZICdulUohogVAR7AjlC0327U4el4L6eAvOqCeudMDVU0NThNaV+b9Df4dXgSP1gXMTnPdhfe/2qDH5cg==
@@ -7119,7 +7124,7 @@ react-composer@^5.0.3:
   dependencies:
     prop-types "^15.6.0"
 
-"react-dom@^16.6.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", react-dom@^18.3.1, react-dom@>=16.0.0, react-dom@>=16.13, react-dom@>=16.8, react-dom@>=16.8.0, react-dom@>=16.9.0, react-dom@>=18.0, react-dom@18.3.1:
+"react-dom@^16.6.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0", "react-dom@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", react-dom@^18.3.1, react-dom@>=16.0.0, react-dom@>=16.13, react-dom@>=16.8, react-dom@>=16.8.0, react-dom@>=16.9.0, react-dom@>=18.0, react-dom@>0.13.0, react-dom@18.3.1:
   version "18.3.1"
   resolved "https://registry.npmmirror.com/react-dom/-/react-dom-18.3.1.tgz"
   integrity sha512-5m4nQKp+rZRb09LNH59GM4BxTh9251/ylbKIbpe7TpGxfJ+9kv6BLkLBXIjjspbgbnIBNqlI23tRnTWT0snUIw==
@@ -7136,6 +7141,14 @@ react-fast-compare@^3.2.0, react-fast-compare@^3.2.2:
   version "3.2.2"
   resolved "https://registry.npmmirror.com/react-fast-compare/-/react-fast-compare-3.2.2.tgz"
   integrity sha512-nsO+KSNgo1SbJqJEYRE9ERzo7YtYbou/OqjSQKxV7jcKox7+usiUVZOAC+XnDOABXggQTno0Y1CpVnuWEc1boQ==
+
+react-github-contribution-calendar@^2.2.0:
+  version "2.2.0"
+  resolved "https://registry.npmmirror.com/react-github-contribution-calendar/-/react-github-contribution-calendar-2.2.0.tgz"
+  integrity sha512-dTpKjsMX/9qyfPC24h3Y0yGxfoOCyp9xBcVvpRe5e98/ikcAW0oIaO6DLfB9byOdN9Y3wovcQ6fHupmZF8NdjA==
+  dependencies:
+    dayjs "^1.11.6"
+    react-measure "^2.5.2"
 
 react-helmet-async@1.3.0:
   version "1.3.0"
@@ -7172,6 +7185,16 @@ react-is@^18.2.0:
   version "18.3.1"
   resolved "https://registry.npmmirror.com/react-is/-/react-is-18.3.1.tgz"
   integrity sha512-/LLMVyas0ljjAtoYiPqYiL8VWXzUUdThrmU5+n20DZv+a+ClRoevUzw5JxU+Ieh5/c87ytoTBV9G1FiKfNJdmg==
+
+react-measure@^2.5.2:
+  version "2.5.2"
+  resolved "https://registry.npmmirror.com/react-measure/-/react-measure-2.5.2.tgz"
+  integrity sha512-M+rpbTLWJ3FD6FXvYV6YEGvQ5tMayQ3fGrZhRPHrE9bVlBYfDCLuDcgNttYfk8IqfOI03jz6cbpqMRTUclQnaA==
+  dependencies:
+    "@babel/runtime" "^7.2.0"
+    get-node-dimensions "^1.2.1"
+    prop-types "^15.6.2"
+    resize-observer-polyfill "^1.5.0"
 
 react-merge-refs@^1.1.0:
   version "1.1.0"
@@ -7211,7 +7234,7 @@ react-use-measure@^2.1.1:
   resolved "https://registry.npmmirror.com/react-use-measure/-/react-use-measure-2.1.7.tgz"
   integrity sha512-KrvcAo13I/60HpwGO5jpW7E9DfusKyLPLvuHlUyP5zqnmAPhNc6qTRjUQrdTADl0lpPpDVU2/Gg51UlOGHXbdg==
 
-"react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16.6.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", react@^18.0.0, react@^18.3.1, "react@>= 16.8.0", react@>=16.0.0, react@>=16.13, react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=16.9.0, react@>=17.0, react@>=18.0, react@18.3.1:
+"react@^15.0.0 || ^16.0.0 || ^17.0.0 || ^18.0.0", "react@^16 || ^17 || ^18", "react@^16.6.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0", "react@^16.8.0 || ^17.0.0 || ^18.0.0 || ^19.0.0", react@^18.0.0, react@^18.3.1, "react@>= 16.8.0", react@>=16.0.0, react@>=16.13, react@>=16.3.0, react@>=16.8, react@>=16.8.0, react@>=16.9.0, react@>=17.0, react@>=18.0, react@>0.13.0, react@18.3.1:
   version "18.3.1"
   resolved "https://registry.npmmirror.com/react/-/react-18.3.1.tgz"
   integrity sha512-wS+hAgJShR0KhEvPJArfuPVN1+Hz1t0Y6n5jLrGQbkb4urgPE/0Rve+1kMB1v/oWgHgm4WIcV+i7F2pTVj+2iQ==
@@ -7367,7 +7390,7 @@ require-from-string@^2.0.2:
   resolved "https://registry.npmmirror.com/require-from-string/-/require-from-string-2.0.2.tgz"
   integrity sha512-Xf0nWe6RseziFMu+Ap9biiUbmplq6S9/p+7w7YXP/JBHhrUDDUhwa+vANyubuqfZWTveU//DYVGsDG7RKL/vEw==
 
-resize-observer-polyfill@^1.5.1:
+resize-observer-polyfill@^1.5.0, resize-observer-polyfill@^1.5.1:
   version "1.5.1"
   resolved "https://registry.npmmirror.com/resize-observer-polyfill/-/resize-observer-polyfill-1.5.1.tgz"
   integrity sha512-LwZrotdHOo12nQuZlHEmtuXdqGoOD0OhaxopaNFxWzInpEgaLWoVuAMbTzixuosCx2nEG58ngzW3vxdWoxIgdg==

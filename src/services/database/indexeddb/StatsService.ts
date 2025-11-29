@@ -6,6 +6,7 @@ export interface IStatsService {
   getDailyStats(date: string): Promise<DailyStudyStat | undefined>;
   syncDeckStats(deckId: string): Promise<void>;
   getLearnedCardsByDate(date: Date): Promise<string[]>; // Returns card IDs
+  getAllDailyStats(): Promise<DailyStudyStat[]>; // Returns all daily stats
 }
 
 export class StatsService implements IStatsService {
@@ -118,5 +119,10 @@ export class StatsService implements IStatsService {
     
     // Return unique card IDs
     return [...new Set(learnedLogEntries.map(log => log.card_id))];
+  }
+
+  async getAllDailyStats(): Promise<DailyStudyStat[]> {
+    const db = await getDB();
+    return db.getAll('daily_stats');
   }
 }
