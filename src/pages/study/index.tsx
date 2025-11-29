@@ -3,6 +3,7 @@ import { Button, Toast, List } from 'antd-mobile';
 import { history, useLocation } from 'umi';
 import SpeechSettingsPanel from '@/components/SpeechSettingsPanel';
 import Flashcard from '@/components/Flashcard';
+import StudyNavigation from '@/components/StudyNavigation';
 import { SoundOutline, SetOutline } from 'antd-mobile-icons';
 import { CardService } from '@/services/database/indexeddb/CardService';
 import { StatsService } from '@/services/database/indexeddb/StatsService';
@@ -16,7 +17,7 @@ import {
    
 } from '@/utils/storage/progress';
 import { tts } from '@/utils/tts';
-import { cleanHtml, handleCardAudioPlay } from '@/utils/audioUtils';
+import { handleCardAudioPlay } from '@/utils/audioUtils';
 import styles from './index.less';
 import { MAX_CARDS_PER_SESSION } from '../../consts/decks';
 
@@ -145,6 +146,36 @@ const StudyPage: React.FC = () => {
     }
   };
 
+  const handlePrevious = () => {
+    if (!session || session.currentIndex <= 0) return;
+
+    const updatedSession: StudySession = {
+      ...session,
+      currentIndex: session.currentIndex - 1,
+      updatedAt: Date.now()
+    };
+
+    saveSession(updatedSession);
+    setSession(updatedSession);
+    setCurrentCard(cards[session.currentIndex - 1]);
+    setShowAnswer(false);
+  };
+
+  const handleNext = () => {
+    if (!session || session.currentIndex >= cards.length - 1) return;
+
+    const updatedSession: StudySession = {
+      ...session,
+      currentIndex: session.currentIndex + 1,
+      updatedAt: Date.now()
+    };
+
+    saveSession(updatedSession);
+    setSession(updatedSession);
+    setCurrentCard(cards[session.currentIndex + 1]);
+    setShowAnswer(false);
+  };
+
   const handleAnswer = async (rating: number) => {
     if (!currentCard || !session) return;
 
@@ -233,11 +264,13 @@ const StudyPage: React.FC = () => {
   };
 
   const handlePlayAudio = (card: any, side: string, accentIndex: number) => {
+    // 直接传递card对象，由audioUtils处理word的提取和使用
     handleCardAudioPlay(card, side, accentIndex, cleanHtml, rate);
   };
-
+  
   return (
     <div className={styles.container}>
+      {/* Header with back to decks button */}
       <div style={{
         height: '44px',
         backgroundColor: '#fff',
@@ -249,7 +282,7 @@ const StudyPage: React.FC = () => {
         borderBottom: '1px solid rgba(0, 0, 0, 0.09)'
       }}>
         <Button size='mini' color='primary' fill='none' onClick={() => history.push('/decks')}>
-          Back
+          Back to Decks
         </Button>
         <h1 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Study</h1>
         <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
@@ -260,13 +293,21 @@ const StudyPage: React.FC = () => {
         </div>
       </div>
 
+      {/* Study Navigation Component */}
+      {session && (
+        <StudyNavigation
+          currentIndex={session.currentIndex}
+          totalCards={cards.length}
+          onPrevious={handlePrevious}
+          onNext={handleNext}
+          currentCard={currentCard}
+        />
+      )}
+
       <div className={styles.cardArea}>
         {currentCard && (
           <Flashcard
-            card={{
-              front: currentCard.front,
-              back: currentCard.back
-            }}
+            currentCard={currentCard}
             isFlipped={showAnswer}
             onFlip={handleCardClick}
             onPlayAudio={handlePlayAudio}

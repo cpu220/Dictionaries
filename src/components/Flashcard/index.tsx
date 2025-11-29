@@ -1,15 +1,13 @@
 import React from 'react';
 import { Button } from 'antd-mobile';
+import { Card } from '@/services/database/types';
 import './index.less';
 
 interface FlashcardProps {
-  card: {
-    front: string;
-    back: string;
-  };
+  currentCard: Card;
   isFlipped: boolean;
   onFlip: () => void;
-  onPlayAudio: (card: any, side: string, accentIndex: number) => void;
+  onPlayAudio: (card: Card, side: string, accentIndex: number) => void;
   cleanHtml: (html: string) => string;
 }
 
@@ -18,7 +16,7 @@ interface FlashcardProps {
  * 支持正反两面展示和音频播放功能
  */
 export default function Flashcard({
-  card,
+  currentCard,
   isFlipped,
   onFlip,
   onPlayAudio,
@@ -26,7 +24,7 @@ export default function Flashcard({
 }: FlashcardProps) {
   const handleAudioClick = (e: React.MouseEvent, side: string, accentIndex: number) => {
     e.stopPropagation();
-    onPlayAudio(card, side, accentIndex);
+    onPlayAudio(currentCard, side, accentIndex);
   };
 
   return (
@@ -42,7 +40,7 @@ export default function Flashcard({
         </div>
         <div
           className="card-content"
-          dangerouslySetInnerHTML={{ __html: cleanHtml(card.front) }}
+          dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }}
         />
       </div>
 
@@ -54,13 +52,13 @@ export default function Flashcard({
         </div>
         <div
           className="card-content"
-          dangerouslySetInnerHTML={{ __html: cleanHtml(card.front) }}
+          dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }}
         />
         <div className="answer-area">
           <div className="divider" />
           <div
             className="card-content"
-            dangerouslySetInnerHTML={{ __html: cleanHtml(card.back) }}
+            dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.back) }}
           />
         </div>
       </div>
