@@ -1,6 +1,16 @@
 .container {
   height: 100vh;
   background-color: #f5f5f5;
+  position: relative;
+}
+
+.importNavBar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1000;
+  background: white;
 }
 
 .content {
@@ -8,6 +18,7 @@
   flex-direction: column;
   gap: 20px;
   padding: 20px 0;
+  padding-top: 80px;
 }
 
 .progress {

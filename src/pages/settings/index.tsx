@@ -26,7 +26,7 @@ export default function SettingsPage() {
 
   return (
     <div className={styles.settingsContainer}>
-      <NavBar onBack={() => history.push('/profile')}>设置</NavBar>
+      <NavBar className={styles.settingsNavBar} onBack={() => history.push('/profile')}>设置</NavBar>
 
       <div className={styles.settingsContent}>
         <AntdCard title="学习选项" className={styles.settingsCard}>

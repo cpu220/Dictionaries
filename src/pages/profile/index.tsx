@@ -154,6 +154,7 @@ export default function ProfilePage() {
     return (
         <div className={styles.profileContainer}>
             <NavBar 
+              className={styles.profileNavBar}
               onBack={() => history.push('/')} 
               right={
                 <SetOutline 

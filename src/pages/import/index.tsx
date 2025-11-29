@@ -56,7 +56,7 @@ const ImportPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <NavBar onBack={() => history.back()}>Import Anki Deck</NavBar>
+      <NavBar className={styles.importNavBar} onBack={() => history.back()}>Import Anki Deck</NavBar>
       <div className={styles.content}>
         <p>Select an .apkg file to import your decks.</p>
         

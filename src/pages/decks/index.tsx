@@ -33,7 +33,7 @@ const DecksPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <NavBar onBack={() => history.push('/')} right={<Button size="mini" color="primary" onClick={() => history.push('/import')}>Import</Button>}>
+      <NavBar className={styles.deckNavBar} onBack={() => history.push('/')} right={<Button size="mini" color="primary" onClick={() => history.push('/import')}>Import</Button>}>
         My Decks
       </NavBar>
 

@@ -78,7 +78,7 @@ export default function LearnedCardsPage() {
 
   return (
     <div className={styles.learnedContainer}>
-      <NavBar onBack={() => history.back()}>{deck ? deck.name : 'Learned Cards'}</NavBar>
+      <NavBar className={styles.learnedNavBar} onBack={() => history.back()}>{deck ? deck.name : 'Learned Cards'}</NavBar>
       
       <div className={styles.learnedSearchContainer}>
         <SearchBar 

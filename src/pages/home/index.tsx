@@ -38,7 +38,7 @@ export default function HomePage() {
 
   return (
     <div className={styles.homeContainer}>
-      <NavBar back={null}>Vocab Master</NavBar>
+      <NavBar className={styles.homeNavBar} back={null}>Vocab Master</NavBar>
 
       <div className={styles.homeContent}>
         <h2 className={styles.homeTitle}>我的卡组</h2>
