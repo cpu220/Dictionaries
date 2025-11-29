@@ -16,6 +16,7 @@ import {
 } from '@/utils/storage/progress';
 import { tts } from '@/utils/tts';
 import styles from './index.less';
+import { MAX_CARDS_PER_SESSION } from '../../consts/decks';
 
 const StudyPage: React.FC = () => {
   const location = useLocation();
@@ -88,12 +89,12 @@ const StudyPage: React.FC = () => {
       } else {
         // No existing session or session is for different deck - create new session
         // 1. Get Due Cards (Review + Learning)
-        const dueCards = await cardService.getDueCards(deckId!, 2);
+        const dueCards = await cardService.getDueCards(deckId!, MAX_CARDS_PER_SESSION);
         let sessionCards = [...dueCards];
 
         // 2. Get New Cards if we have space
-        if (sessionCards.length < 20) {
-          const limit = 20 - sessionCards.length;
+        if (sessionCards.length < MAX_CARDS_PER_SESSION) {
+          const limit = MAX_CARDS_PER_SESSION - sessionCards.length;
           const order = (localStorage.getItem('newCardOrder') as 'random' | 'sequential') || 'random';
           const newCards = await cardService.getNewCards(deckId!, limit, order);
           sessionCards = [...sessionCards, ...newCards];
