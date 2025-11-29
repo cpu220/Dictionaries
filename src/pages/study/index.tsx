@@ -5,6 +5,14 @@ import { SoundOutline, SetOutline } from 'antd-mobile-icons';
 import { CardService } from '@/services/database/indexeddb/CardService';
 import { Scheduler } from '@/services/scheduling/Scheduler';
 import { Card } from '@/services/database/types';
+import { StudySession } from '@/interfaces';
+import { 
+  loadCurrentSession, 
+  createSession, 
+  saveSession, 
+  clearSession,
+  getSessionsMap 
+} from '@/utils/storage/progress';
 import { tts } from '@/utils/tts';
 import styles from './index.less';
 
@@ -18,6 +26,7 @@ const StudyPage: React.FC = () => {
   const [showAnswer, setShowAnswer] = useState(false);
   const [finished, setFinished] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [session, setSession] = useState<StudySession | null>(null);
   
   // TTS Settings
   const [rate, setRate] = useState(1);
@@ -51,25 +60,54 @@ const StudyPage: React.FC = () => {
   const loadCards = async () => {
     setLoading(true);
     try {
-      // 1. Get Due Cards (Review + Learning)
-      // These are always deterministic based on 'due' timestamp
-      const dueCards = await cardService.getDueCards(deckId!, 20);
-      let sessionCards = [...dueCards];
+      // Check for existing session for this deck
+      const existingSession = loadCurrentSession();
       
-      // 2. Get New Cards if we have space
-      if (sessionCards.length < 20) {
-        const limit = 20 - sessionCards.length;
-        // Get order preference from localStorage
-        const order = (localStorage.getItem('newCardOrder') as 'random' | 'sequential') || 'random';
-        const newCards = await cardService.getNewCards(deckId!, limit, order);
-        sessionCards = [...sessionCards, ...newCards];
-      }
-
-      if (sessionCards.length > 0) {
-        setCards(sessionCards);
-        setCurrentCard(sessionCards[0]);
+      if (existingSession && existingSession.deckId === deckId && !existingSession.completed) {
+        // Restore session: load cards by IDs from session
+        const cardIds = existingSession.words.map(w => w.id);
+        const restoredCards = await Promise.all(
+          cardIds.map(id => cardService.getCard(id))
+        );
+        const validCards = restoredCards.filter(c => c !== undefined) as Card[];
+        
+        // Resume from currentIndex
+        const remainingCards = validCards.slice(existingSession.currentIndex);
+        
+        if (remainingCards.length > 0) {
+          setCards(validCards);
+          setCurrentCard(remainingCards[0]);
+          setSession(existingSession);
+          Toast.show({ content: `Resuming from card ${existingSession.currentIndex + 1}/${validCards.length}`, icon: 'success' });
+        } else {
+          // Session was already completed
+          setFinished(true);
+        }
       } else {
-        setFinished(true);
+        // No existing session or session is for different deck - create new session
+        // 1. Get Due Cards (Review + Learning)
+        const dueCards = await cardService.getDueCards(deckId!, 20);
+        let sessionCards = [...dueCards];
+        
+        // 2. Get New Cards if we have space
+        if (sessionCards.length < 20) {
+          const limit = 20 - sessionCards.length;
+          const order = (localStorage.getItem('newCardOrder') as 'random' | 'sequential') || 'random';
+          const newCards = await cardService.getNewCards(deckId!, limit, order);
+          sessionCards = [...sessionCards, ...newCards];
+        }
+
+        if (sessionCards.length > 0) {
+          // Create new session
+          const cardIds = sessionCards.map(c => c.id);
+          const newSession = createSession(deckId!, cardIds);
+          
+          setCards(sessionCards);
+          setCurrentCard(sessionCards[0]);
+          setSession(newSession);
+        } else {
+          setFinished(true);
+        }
       }
     } catch (error) {
       console.error(error);
@@ -102,18 +140,37 @@ const StudyPage: React.FC = () => {
   };
 
   const handleAnswer = async (rating: number) => {
-    if (!currentCard) return;
+    if (!currentCard || !session) return;
 
     const updatedCard = scheduler.answerCard(currentCard, rating);
     await cardService.updateCard(updatedCard);
 
-    const remainingCards = cards.slice(1);
+    // Update session progress
+    const updatedSession: StudySession = {
+      ...session,
+      currentIndex: session.currentIndex + 1,
+      updatedAt: Date.now(),
+      words: session.words.map((w, idx) => 
+        idx === session.currentIndex ? { ...w, result: rating } : w
+      )
+    };
+
+    const remainingCards = cards.slice(session.currentIndex + 1);
     
     if (remainingCards.length > 0) {
-      setCards(remainingCards);
+      // Save progress and continue
+      saveSession(updatedSession);
+      setSession(updatedSession);
       setCurrentCard(remainingCards[0]);
       setShowAnswer(false);
     } else {
+      // Mark session as completed
+      const completedSession: StudySession = {
+        ...updatedSession,
+        completed: true
+      };
+      saveSession(completedSession);
+      setSession(completedSession);
       setCards([]);
       setCurrentCard(null);
       setFinished(true);
