@@ -31,14 +31,24 @@ export default function Layout() {
     },
   ];
 
+  // 检查是否为study页面，不显示底部导航栏
+  const isStudyPage = location.pathname.startsWith('/study');
+  console.log('isStudyPage', isStudyPage);
   return (
-    <div style={{ paddingBottom: '50px' }}>
-      <Outlet />
-      <TabBar activeKey={getActiveKey()} onChange={setActiveKey}>
-        {tabs.map(item => (
-          <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
-        ))}
-      </TabBar>
+    <div className={styles.container}>
+      {!isStudyPage && <div className={styles.content}>
+        <Outlet />
+      </div>}
+      {isStudyPage && <div className={styles.fullContent}>
+        <Outlet />
+      </div>}
+      {!isStudyPage && <div className={styles.tabBar}>
+        <TabBar activeKey={getActiveKey()} onChange={setActiveKey}>
+          {tabs.map(item => (
+            <TabBar.Item key={item.key} icon={item.icon} title={item.title} />
+          ))}
+        </TabBar>
+      </div>}
     </div>
   );
 }

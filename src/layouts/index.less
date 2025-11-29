@@ -1,3 +1,29 @@
+.container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+.content {
+  flex: 1;
+  padding-bottom: 50px; /* 为底部导航栏留出空间 */
+}
+
+.fullContent {
+  flex: 1;
+  /* 不需要底部内边距，因为没有导航栏 */
+}
+
+.tabBar {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  background-color: white;
+}
+
 .navs {
   ul {
     padding: 0;
