@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { Button, Card as AntCard, Toast, NavBar, Slider, Popover, List } from 'antd-mobile';
+import { Button, Toast, List } from 'antd-mobile';
 import { history, useLocation } from 'umi';
+import SpeechSettingsPanel from '@/components/SpeechSettingsPanel';
+import Flashcard from '@/components/Flashcard';
 import { SoundOutline, SetOutline } from 'antd-mobile-icons';
 import { CardService } from '@/services/database/indexeddb/CardService';
 import { StatsService } from '@/services/database/indexeddb/StatsService';
@@ -11,10 +13,10 @@ import {
   loadCurrentSession,
   createSession,
   saveSession,
-  clearSession,
-  getSessionsMap
+   
 } from '@/utils/storage/progress';
 import { tts } from '@/utils/tts';
+import { cleanHtml, handleCardAudioPlay } from '@/utils/audioUtils';
 import styles from './index.less';
 import { MAX_CARDS_PER_SESSION } from '../../consts/decks';
 
@@ -32,6 +34,7 @@ const StudyPage: React.FC = () => {
 
   // TTS Settings
   const [rate, setRate] = useState(1);
+  const [showSettings, setShowSettings] = useState(false);
 
   const cardService = new CardService();
   const statsService = new StatsService();
@@ -194,30 +197,7 @@ const StudyPage: React.FC = () => {
     }
   };
 
-  const renderSettings = () => (
-    <div style={{ width: '300px' }}>
-      <List header='Settings'>
-        <List.Item
-          title="Speech Rate"
-          extra={`${rate.toFixed(1)}x`}
-        >
-          <Slider
-            min={0.5}
-            max={2}
-            step={0.1}
-            value={rate}
-            onChange={(val) => setRate(val as number)}
-            marks={{
-              0.5: '0.5',
-              1.0: '1.0',
-              1.5: '1.5',
-              2.0: '2.0'
-            }}
-          />
-        </List.Item>
-      </List>
-    </div>
-  );
+  // 不再需要renderSettings函数，设置面板直接在JSX中实现
 
   if (loading) {
     return (
@@ -250,62 +230,48 @@ const StudyPage: React.FC = () => {
       setShowAnswer(true);
       // Audio will be auto-played by useEffect when showAnswer becomes true
     }
-    // Back side: do nothing, clicking just for interaction
-    // Audio is already handled by US/UK buttons
+  };
+
+  const handlePlayAudio = (card: any, side: string, accentIndex: number) => {
+    handleCardAudioPlay(card, side, accentIndex, cleanHtml, rate);
   };
 
   return (
     <div className={styles.container}>
-      <NavBar
-        onBack={() => history.push('/decks')}
-        right={
-          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
-            <Popover content={renderSettings()} trigger='click' placement='bottom-end'>
-              <SetOutline fontSize={24} />
-            </Popover>
+      <div style={{
+        height: '44px',
+        backgroundColor: '#fff',
+        display: 'flex',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        paddingLeft: '16px',
+        paddingRight: '16px',
+        borderBottom: '1px solid rgba(0, 0, 0, 0.09)'
+      }}>
+        <Button size='mini' color='primary' fill='none' onClick={() => history.push('/decks')}>
+          Back
+        </Button>
+        <h1 style={{ fontSize: '18px', fontWeight: '600', margin: 0 }}>Study</h1>
+        <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
+          <div onClick={() => setShowSettings(!showSettings)} style={{ cursor: 'pointer' }}>
+            <SetOutline fontSize={24} />
           </div>
-        }
-      >
-        Study
-      </NavBar>
+          {showSettings && <SpeechSettingsPanel rate={rate} onRateChange={setRate} />}
+        </div>
+      </div>
 
       <div className={styles.cardArea}>
         {currentCard && (
-          <div
-            className={`${styles.flipContainer} ${showAnswer ? styles.flipped : ''}`}
-            onClick={handleCardClick}
-          >
-            {/* Front Face */}
-            <AntCard className={`${styles.flashcard} ${styles.cardFront}`}>
-              <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-                <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'front', 0); }}>🇺🇸 US</Button>
-                <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'front', 1); }}>🇬🇧 UK</Button>
-              </div>
-              <div
-                className={styles.cardContent}
-                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }}
-              />
-            </AntCard>
-
-            {/* Back Face */}
-            <AntCard className={`${styles.flashcard} ${styles.cardBack}`}>
-              <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-                <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'back', 0); }}>🇺🇸 US</Button>
-                <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'back', 1); }}>🇬🇧 UK</Button>
-              </div>
-              <div
-                className={styles.cardContent}
-                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }}
-              />
-              <div className={styles.answerArea}>
-                <div className={styles.divider} />
-                <div
-                  className={styles.cardContent}
-                  dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.back) }}
-                />
-              </div>
-            </AntCard>
-          </div>
+          <Flashcard
+            card={{
+              front: currentCard.front,
+              back: currentCard.back
+            }}
+            isFlipped={showAnswer}
+            onFlip={handleCardClick}
+            onPlayAudio={handlePlayAudio}
+            cleanHtml={cleanHtml}
+          />
         )}
       </div>
       {
