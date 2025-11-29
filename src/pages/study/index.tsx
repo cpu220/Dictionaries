@@ -88,7 +88,7 @@ const StudyPage: React.FC = () => {
       } else {
         // No existing session or session is for different deck - create new session
         // 1. Get Due Cards (Review + Learning)
-        const dueCards = await cardService.getDueCards(deckId!, 20);
+        const dueCards = await cardService.getDueCards(deckId!, 2);
         let sessionCards = [...dueCards];
 
         // 2. Get New Cards if we have space

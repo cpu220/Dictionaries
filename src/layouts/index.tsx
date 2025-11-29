@@ -1,6 +1,6 @@
 import { Outlet, useLocation, history } from 'umi';
 import { TabBar } from 'antd-mobile';
-import { AppOutline, UserOutline } from 'antd-mobile-icons';
+import { AppOutline, UserOutline, FolderOutline } from 'antd-mobile-icons';
 import styles from './index.less';
 
 export default function Layout() {
@@ -10,6 +10,9 @@ export default function Layout() {
   const getActiveKey = () => {
     if (location.pathname.startsWith('/Dictionaries/profile')) {
       return '/Dictionaries/profile';
+    }
+    if (location.pathname.startsWith('/Dictionaries/decks')) {
+      return '/Dictionaries/decks';
     }
     return '/Dictionaries/';
   };
@@ -23,6 +26,11 @@ export default function Layout() {
       key: '/',
       title: '首页',
       icon: <AppOutline />,
+    },
+    {
+      key: '/decks',
+      title: '卡包',
+      icon: <FolderOutline />,
     },
     {
       key: '/profile',

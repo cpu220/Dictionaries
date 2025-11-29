@@ -71,7 +71,7 @@ export default function HomePage() {
                   borderRadius: '0.12rem',
                   cursor: 'pointer',
                 }}
-                onClick={() => history.push(`/study?deck=${deck.id}`)}
+                onClick={() => history.push(`/study?deckId=${deck.id}`)}
               >
                 <div style={{ padding: '0.08rem' }}>
                   <div
@@ -86,6 +86,7 @@ export default function HomePage() {
                   >
                     {deck.name}
                   </div>
+                  <div>{`/study?deckId=${deck.id}`}</div>
                   <div
                     style={{
                       fontSize: '0.32rem',
