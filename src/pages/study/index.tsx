@@ -7,12 +7,12 @@ import { StatsService } from '@/services/database/indexeddb/StatsService';
 import { Scheduler } from '@/services/scheduling/Scheduler';
 import { Card } from '@/services/database/types';
 import { StudySession } from '@/interfaces';
-import { 
-  loadCurrentSession, 
-  createSession, 
-  saveSession, 
+import {
+  loadCurrentSession,
+  createSession,
+  saveSession,
   clearSession,
-  getSessionsMap 
+  getSessionsMap
 } from '@/utils/storage/progress';
 import { tts } from '@/utils/tts';
 import styles from './index.less';
@@ -28,7 +28,7 @@ const StudyPage: React.FC = () => {
   const [finished, setFinished] = useState(false);
   const [loading, setLoading] = useState(true);
   const [session, setSession] = useState<StudySession | null>(null);
-  
+
   // TTS Settings
   const [rate, setRate] = useState(1);
 
@@ -64,7 +64,7 @@ const StudyPage: React.FC = () => {
     try {
       // Check for existing session for this deck
       const existingSession = loadCurrentSession();
-      
+
       if (existingSession && existingSession.deckId === deckId && !existingSession.completed) {
         // Restore session: load cards by IDs from session
         const cardIds = existingSession.words.map(w => w.id);
@@ -72,10 +72,10 @@ const StudyPage: React.FC = () => {
           cardIds.map(id => cardService.getCard(id))
         );
         const validCards = restoredCards.filter(c => c !== undefined) as Card[];
-        
+
         // Resume from currentIndex
         const remainingCards = validCards.slice(existingSession.currentIndex);
-        
+
         if (remainingCards.length > 0) {
           setCards(validCards);
           setCurrentCard(remainingCards[0]);
@@ -90,7 +90,7 @@ const StudyPage: React.FC = () => {
         // 1. Get Due Cards (Review + Learning)
         const dueCards = await cardService.getDueCards(deckId!, 20);
         let sessionCards = [...dueCards];
-        
+
         // 2. Get New Cards if we have space
         if (sessionCards.length < 20) {
           const limit = 20 - sessionCards.length;
@@ -103,7 +103,7 @@ const StudyPage: React.FC = () => {
           // Create new session
           const cardIds = sessionCards.map(c => c.id);
           const newSession = createSession(deckId!, cardIds);
-          
+
           setCards(sessionCards);
           setCurrentCard(sessionCards[0]);
           setSession(newSession);
@@ -147,17 +147,17 @@ const StudyPage: React.FC = () => {
     const startTime = Date.now(); // In a real app, track actual time spent
     // For now, we'll estimate or just use a placeholder, or we could track time since card loaded
     // But to keep it simple, let's just assume a fixed time or 0 for now if we don't have a timer
-    const timeTaken = 0; 
+    const timeTaken = 0;
 
     const updatedCard = scheduler.answerCard(currentCard, rating);
     await cardService.updateCard(updatedCard);
 
     // Log statistics
     await statsService.logReview(
-      currentCard.id, 
-      currentCard.deck_id, 
-      rating, 
-      timeTaken, 
+      currentCard.id,
+      currentCard.deck_id,
+      rating,
+      timeTaken,
       currentCard.type
     );
 
@@ -166,13 +166,13 @@ const StudyPage: React.FC = () => {
       ...session,
       currentIndex: session.currentIndex + 1,
       updatedAt: Date.now(),
-      words: session.words.map((w, idx) => 
+      words: session.words.map((w, idx) =>
         idx === session.currentIndex ? { ...w, result: rating } : w
       )
     };
 
     const remainingCards = cards.slice(session.currentIndex + 1);
-    
+
     if (remainingCards.length > 0) {
       // Save progress and continue
       saveSession(updatedSession);
@@ -196,16 +196,16 @@ const StudyPage: React.FC = () => {
   const renderSettings = () => (
     <div style={{ width: '300px' }}>
       <List header='Settings'>
-        <List.Item 
-          title="Speech Rate" 
+        <List.Item
+          title="Speech Rate"
           extra={`${rate.toFixed(1)}x`}
         >
-          <Slider 
-            min={0.5} 
-            max={2} 
-            step={0.1} 
-            value={rate} 
-            onChange={(val) => setRate(val as number)} 
+          <Slider
+            min={0.5}
+            max={2}
+            step={0.1}
+            value={rate}
+            onChange={(val) => setRate(val as number)}
             marks={{
               0.5: '0.5',
               1.0: '1.0',
@@ -255,10 +255,10 @@ const StudyPage: React.FC = () => {
 
   return (
     <div className={styles.container}>
-      <NavBar 
+      <NavBar
         onBack={() => history.push('/decks')}
         right={
-          <div style={{ display: 'flex', gap: '10px' }}>
+          <div style={{ display: 'flex', gap: '10px', justifyContent: 'flex-end' }}>
             <Popover content={renderSettings()} trigger='click' placement='bottom-end'>
               <SetOutline fontSize={24} />
             </Popover>
@@ -267,10 +267,10 @@ const StudyPage: React.FC = () => {
       >
         Study
       </NavBar>
-      
+
       <div className={styles.cardArea}>
         {currentCard && (
-          <div 
+          <div
             className={`${styles.flipContainer} ${showAnswer ? styles.flipped : ''}`}
             onClick={handleCardClick}
           >
@@ -280,9 +280,9 @@ const StudyPage: React.FC = () => {
                 <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'front', 0); }}>🇺🇸 US</Button>
                 <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'front', 1); }}>🇬🇧 UK</Button>
               </div>
-              <div 
+              <div
                 className={styles.cardContent}
-                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }} 
+                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }}
               />
             </AntCard>
 
@@ -292,15 +292,15 @@ const StudyPage: React.FC = () => {
                 <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'back', 0); }}>🇺🇸 US</Button>
                 <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'back', 1); }}>🇬🇧 UK</Button>
               </div>
-              <div 
+              <div
                 className={styles.cardContent}
-                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }} 
+                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }}
               />
               <div className={styles.answerArea}>
                 <div className={styles.divider} />
-                <div 
+                <div
                   className={styles.cardContent}
-                  dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.back) }} 
+                  dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.back) }}
                 />
               </div>
             </AntCard>
@@ -309,37 +309,37 @@ const StudyPage: React.FC = () => {
       </div>
       {
         showAnswer && (
-           <div className={styles.controls}>
-          <div className={styles.ratings}>
-            <Button 
-              className={styles.rateBtn} 
-              color="danger" 
-              onClick={() => handleAnswer(1)}
-            >
-              Again
-            </Button>
-            <Button 
-              className={styles.rateBtn} 
-              color="warning" 
-              onClick={() => handleAnswer(2)}
-            >
-              Hard
-            </Button>
-            <Button 
-              className={styles.rateBtn} 
-              color="success" 
-              onClick={() => handleAnswer(3)}
-            >
-              Good
-            </Button>
-            <Button 
-              className={styles.rateBtn} 
-              color="primary" 
-              onClick={() => handleAnswer(4)}
-            >
-              Easy
-            </Button>
-          </div>
+          <div className={styles.controls}>
+            <div className={styles.ratings}>
+              <Button
+                className={styles.rateBtn}
+                color="danger"
+                onClick={() => handleAnswer(1)}
+              >
+                Again
+              </Button>
+              <Button
+                className={styles.rateBtn}
+                color="warning"
+                onClick={() => handleAnswer(2)}
+              >
+                Hard
+              </Button>
+              <Button
+                className={styles.rateBtn}
+                color="success"
+                onClick={() => handleAnswer(3)}
+              >
+                Good
+              </Button>
+              <Button
+                className={styles.rateBtn}
+                color="primary"
+                onClick={() => handleAnswer(4)}
+              >
+                Easy
+              </Button>
+            </div>
           </div>
         )
       }

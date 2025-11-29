@@ -3,6 +3,18 @@
   flex-direction: column;
   height: 100vh;
   background-color: #f5f5f5;
+  position: relative;
+}
+
+.cardArea {
+  flex: 1;
+  padding: 20px;
+  padding-bottom: 120px; // 确保内容不被底部控件遮挡
+  overflow-y: auto;
+  display: flex;
+  justify-content: center;
+  align-items: flex-start;
+  perspective: 1000px;
 }
 
 .loading,
@@ -13,16 +25,6 @@
   justify-content: center;
   height: 100%;
   gap: 20px;
-}
-
-.cardArea {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-  display: flex;
-  justify-content: center;
-  align-items: flex-start;
-  perspective: 1000px; // Add perspective for 3D effect
 }
 
 .flipContainer {
@@ -67,14 +69,26 @@
 
 .divider {
   height: 1px;
-  background-color: #eee;
   margin: 20px 0;
 }
 
+// 底部控制栏样式 - 使用fixed定位确保半透明效果正确显示
 .controls {
+  // 固定在底部
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
   padding: 20px;
-  background-color: #fff;
-  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.05);
+  // 半透明背景 - 使用rgba确保透明度
+  background-color: rgba(255, 255, 255, 0.5);
+  // 毛玻璃效果
+  backdrop-filter: blur(1px);
+  -webkit-backdrop-filter: blur(1px);
+  // 阴影效果
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.5);
+  // 确保层级足够高
+  z-index: 1000;
 }
 
 .ratings {
