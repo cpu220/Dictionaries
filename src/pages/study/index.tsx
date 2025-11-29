@@ -216,6 +216,16 @@ const StudyPage: React.FC = () => {
     return html.replace(/\{\{.*?\}\}/g, '');
   };
 
+  const handleCardClick = () => {
+    if (!showAnswer) {
+      // Front side: flip to show answer
+      setShowAnswer(true);
+      // Audio will be auto-played by useEffect when showAnswer becomes true
+    }
+    // Back side: do nothing, clicking just for interaction
+    // Audio is already handled by US/UK buttons
+  };
+
   return (
     <div className={styles.container}>
       <NavBar 
@@ -233,16 +243,32 @@ const StudyPage: React.FC = () => {
       
       <div className={styles.cardArea}>
         {currentCard && (
-          <AntCard className={styles.flashcard}>
-             <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
-                <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, showAnswer ? 'back' : 'front', 0); }}>🇺🇸 US</Button>
-                <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, showAnswer ? 'back' : 'front', 1); }}>🇬🇧 UK</Button>
-             </div>
-            <div 
-              className={styles.cardContent}
-              dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }} 
-            />
-            {showAnswer && (
+          <div 
+            className={`${styles.flipContainer} ${showAnswer ? styles.flipped : ''}`}
+            onClick={handleCardClick}
+          >
+            {/* Front Face */}
+            <AntCard className={`${styles.flashcard} ${styles.cardFront}`}>
+              <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'front', 0); }}>🇺🇸 US</Button>
+                <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'front', 1); }}>🇬🇧 UK</Button>
+              </div>
+              <div 
+                className={styles.cardContent}
+                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }} 
+              />
+            </AntCard>
+
+            {/* Back Face */}
+            <AntCard className={`${styles.flashcard} ${styles.cardBack}`}>
+              <div className={styles.cardHeader} style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '10px' }}>
+                <Button size='mini' style={{ marginRight: '5px' }} onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'back', 0); }}>🇺🇸 US</Button>
+                <Button size='mini' onClick={(e) => { e.stopPropagation(); playCardAudio(currentCard, 'back', 1); }}>🇬🇧 UK</Button>
+              </div>
+              <div 
+                className={styles.cardContent}
+                dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.front) }} 
+              />
               <div className={styles.answerArea}>
                 <div className={styles.divider} />
                 <div 
@@ -250,21 +276,16 @@ const StudyPage: React.FC = () => {
                   dangerouslySetInnerHTML={{ __html: cleanHtml(currentCard.back) }} 
                 />
               </div>
-            )}
-          </AntCard>
+            </AntCard>
+          </div>
         )}
       </div>
 
       <div className={styles.controls}>
         {!showAnswer ? (
-          <Button 
-            block 
-            color="primary" 
-            size="large"
-            onClick={() => setShowAnswer(true)}
-          >
-            Show Answer
-          </Button>
+          <div style={{ textAlign: 'center', color: '#999', padding: '10px' }}>
+            点击卡片查看答案
+          </div>
         ) : (
           <div className={styles.ratings}>
             <Button 
