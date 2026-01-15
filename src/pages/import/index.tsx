@@ -1,5 +1,5 @@
 import React, { useState, useRef } from 'react';
-import { Button, ProgressBar, Toast, Card, NavBar } from 'antd-mobile';
+import { Button, ProgressBar, Toast, Card, NavBar, Space } from 'antd-mobile';
 import { history } from 'umi';
 import { ApkgImporter } from '@/services/import/ApkgImporter';
 import styles from './index.less';
@@ -54,6 +54,13 @@ const ImportPage: React.FC = () => {
     }
   };
 
+  /**
+   * 跳转到局域网导入页面
+   */
+  const handleLanImport = () => {
+    history.push('/import/lan');
+  };
+
   return (
     <div className={styles.container}>
       <NavBar className={styles.importNavBar} onBack={() => history.back()}>Import Anki Deck</NavBar>
@@ -69,13 +76,27 @@ const ImportPage: React.FC = () => {
         />
 
         {!importing ? (
-          <Button 
-            block 
-            color="primary" 
-            onClick={() => fileInputRef.current?.click()}
-          >
-            Select File
-          </Button>
+          <Space direction="vertical" className={styles.importOptions}>
+            <Button 
+              block 
+              color="primary" 
+              onClick={() => fileInputRef.current?.click()}
+            >
+              选择本地文件
+            </Button>
+            
+            <Button 
+              block 
+              color="success" 
+              onClick={handleLanImport}
+            >
+              局域网导入
+            </Button>
+            
+            <div className={styles.lanHint}>
+              同一局域网下，可通过PC浏览器上传文件到手机端
+            </div>
+          </Space>
         ) : (
           <div className={styles.progress}>
             <ProgressBar percent={progress} />

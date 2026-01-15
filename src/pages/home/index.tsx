@@ -66,11 +66,9 @@ export default function HomePage() {
                   <div className={styles.homeDeckName}>
                     {deck.name}
                   </div>
-                  <div>{`/study?deckId=${deck.id}`}</div>
+                  {/* <div>{`/study?deckId=${deck.id}`}</div> */}
                   <div className={styles.homeDeckStats}>
-                    总计: {deck.total_cards} 词
-                    <br />
-                    已学: {deck.learned_cards} 词
+                    {deck.learned_cards}/{deck.total_cards} 词 
                   </div>
                   <ProgressBar
                     percent={getProgress(deck)}

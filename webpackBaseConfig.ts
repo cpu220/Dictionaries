@@ -14,8 +14,10 @@ export default {
     { path: "/profile/learned", component: "profile/learned/index" },
     { path: "/study", component: "study/index" },
     { path: "/import", component: "import/index" },
+    { path: "/import/lan", component: "import/lan-import" },
     { path: "/decks", component: "decks/index" },
     { path: "/settings", component: "settings/index" },
+    { path: "/lan-upload", component: "lan-upload/index" },
   ],
 
   // npm客户端配置

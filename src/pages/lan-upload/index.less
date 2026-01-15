@@ -1,0 +1,209 @@
+.container {
+  padding: 20px;
+  background-color: #f5f5f5;
+  min-height: 100vh;
+}
+
+.card {
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.1);
+  padding: 20px;
+}
+
+.title {
+  text-align: center;
+  margin-bottom: 10px;
+  color: #333;
+}
+
+.description {
+  text-align: center;
+  margin-bottom: 20px;
+  color: #666;
+}
+
+.content {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+/* 文件选择区域 */
+.fileSelectArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  border: 2px dashed #d9d9d9;
+  border-radius: 8px;
+  background-color: #fafafa;
+  transition: all 0.3s;
+
+  &:hover {
+    border-color: #1677ff;
+    background-color: #f0f7ff;
+  }
+}
+
+.fileInput {
+  display: none;
+}
+
+.hint {
+  font-size: 12px;
+  color: #999;
+  text-align: center;
+}
+
+/* 文件信息区域 */
+.fileInfoArea {
+  display: flex;
+  justify-content: center;
+}
+
+.fileInfoCard {
+  width: 100%;
+  max-width: 500px;
+  padding: 15px;
+}
+
+.fileInfo {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.fileName {
+  font-weight: 500;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.fileSize {
+  font-size: 12px;
+  color: #666;
+}
+
+/* 进度显示区域 */
+.progressArea {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.statusContainer {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.statusIcon {
+  font-size: 16px;
+  color: #1677ff;
+}
+
+.statusText {
+  font-size: 14px;
+  color: #666;
+}
+
+/* 成功状态 */
+.successArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background-color: #f6ffed;
+  border: 1px solid #b7eb8f;
+  border-radius: 8px;
+}
+
+.successIcon {
+  font-size: 48px;
+  color: #52c41a;
+}
+
+.successText {
+  text-align: center;
+  color: #389e0d;
+}
+
+/* 错误状态 */
+.errorArea {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 20px;
+  background-color: #fff1f0;
+  border: 1px solid #ffccc7;
+  border-radius: 8px;
+}
+
+.errorIcon {
+  font-size: 48px;
+  color: #ff4d4f;
+}
+
+.errorText {
+  text-align: center;
+  color: #cf1322;
+}
+
+.retryButton {
+  margin-top: 10px;
+  width: 100%;
+  max-width: 200px;
+}
+
+/* 操作指引 */
+.guideCard {
+  padding: 20px;
+}
+
+.guideTitle {
+  margin-bottom: 15px;
+  color: #333;
+}
+
+.guideList {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.guideList li {
+  margin-bottom: 8px;
+  color: #666;
+  line-height: 1.5;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .container {
+    padding: 10px;
+  }
+
+  .card {
+    padding: 15px;
+  }
+
+  .title {
+    font-size: 20px;
+  }
+
+  .fileInfo {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+  }
+
+  .guideList {
+    padding-left: 15px;
+  }
+}

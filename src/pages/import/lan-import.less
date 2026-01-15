@@ -1,0 +1,271 @@
+.container {
+  min-height: 100vh;
+  background-color: #f5f5f5;
+}
+
+.navBar {
+  background-color: #1677ff;
+  color: white;
+}
+
+.content {
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+/* 卡片样式 */
+.statusCard,
+.progressCard,
+.errorCard,
+.guideCard,
+.noteCard {
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+  padding: 16px;
+}
+
+.cardTitle {
+  margin-bottom: 16px;
+  color: #333;
+  font-size: 16px;
+}
+
+/* 服务器状态 */
+.serverStatus {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.statusIndicator {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-size: 12px;
+  font-weight: 500;
+  align-self: flex-start;
+}
+
+.statusIndicator.running {
+  background-color: #f0f9eb;
+  color: #52c41a;
+  border: 1px solid #b7eb8f;
+}
+
+.statusIndicator.stopped {
+  background-color: #fff1f0;
+  color: #ff4d4f;
+  border: 1px solid #ffccc7;
+}
+
+.serverActions {
+  width: 100%;
+}
+
+/* 地址显示区域 */
+.addressSection {
+  margin-top: 16px;
+}
+
+.addressContainer {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #fafafa;
+  padding: 12px;
+  border-radius: 8px;
+  border: 1px solid #d9d9d9;
+  margin-bottom: 8px;
+}
+
+.addressText {
+  flex: 1;
+  font-size: 14px;
+  color: #333;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.copyButton {
+  flex-shrink: 0;
+}
+
+.addressHint {
+  font-size: 12px;
+  color: #999;
+  line-height: 1.4;
+  margin-top: 8px;
+}
+
+.addressHint p {
+  margin: 0 0 8px 0;
+  color: #faad14;
+  font-weight: 500;
+}
+
+.addressTips {
+  padding-left: 20px;
+  margin: 0;
+  list-style-type: disc;
+}
+
+.addressTips li {
+  margin-bottom: 6px;
+  color: #666;
+  line-height: 1.4;
+}
+
+.addressTips li:last-child {
+  margin-bottom: 0;
+}
+
+/* 导入进度 */
+.progressSection {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.progressBar {
+  width: 100%;
+}
+
+.progressStatus {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.statusIcon {
+  font-size: 16px;
+}
+
+.statusInfo {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.statusMessage {
+  font-size: 14px;
+  color: #333;
+}
+
+.fileInfo {
+  font-size: 12px;
+  color: #666;
+}
+
+/* 空进度状态 */
+.emptyProgress {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 32px 0;
+  gap: 12px;
+}
+
+.emptyIcon {
+  font-size: 48px;
+  color: #d9d9d9;
+}
+
+.emptyText {
+  color: #999;
+  font-size: 14px;
+}
+
+/* 错误信息 */
+.errorSection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 0;
+}
+
+.errorIcon {
+  font-size: 48px;
+  color: #ff4d4f;
+}
+
+.errorText {
+  color: #cf1322;
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 操作指引 */
+.guideList {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.guideList li {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* 注意事项 */
+.noteList {
+  padding-left: 20px;
+  margin: 0;
+}
+
+.noteList li {
+  margin-bottom: 8px;
+  color: #666;
+  font-size: 14px;
+  line-height: 1.5;
+  list-style-type: disc;
+}
+
+/* 响应式设计 */
+@media (max-width: 768px) {
+  .content {
+    padding: 12px;
+    gap: 12px;
+  }
+
+  .statusCard,
+  .progressCard,
+  .errorCard,
+  .guideCard,
+  .noteCard {
+    padding: 12px;
+  }
+
+  .cardTitle {
+    margin-bottom: 12px;
+    font-size: 15px;
+  }
+
+  .serverStatus {
+    gap: 12px;
+  }
+
+  .addressContainer {
+    padding: 10px;
+  }
+
+  .addressText {
+    font-size: 13px;
+  }
+
+  .guideList,
+  .noteList {
+    padding-left: 16px;
+  }
+
+  .guideList li,
+  .noteList li {
+    font-size: 13px;
+    margin-bottom: 6px;
+  }
+}
